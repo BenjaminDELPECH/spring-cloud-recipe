@@ -1,0 +1,111 @@
+{
+  "foods-minimal": [
+    {
+      "id": 1,
+      "name": "Kiwi"
+    },
+    {
+      "id": 2,
+      "name": "Banane"
+    }
+  ],
+  "conversionFactors": [
+    {
+      "id": "1",
+      "measure": {
+        "id": "1",
+        "name": "fruit moyen"
+      },
+      "factor": 0.69
+    }
+  ],
+  "measures": [
+    {
+      "id": "1",
+      "name": "fruit moyen"
+    }
+  ],
+  "recipes": [
+    {
+      "name": "Recette 1 - gouter - edit",
+      "recipeFoods": [
+        {
+          "id": 2,
+          "food": {
+            "id": 2,
+            "name": "Banane"
+          },
+          "quantity": 1,
+          "conversionFactor": {
+            "id": 1,
+            "factor": 0.5,
+            "measure": {
+              "id": 1,
+              "name": "portion-test"
+            }
+          }
+        },
+        {
+          "id": 1,
+          "food": {
+            "id": 1,
+            "name": "Kiwi"
+          },
+          "quantity": 1,
+          "conversionFactor": {
+            "id": 1,
+            "factor": 0.5,
+            "measure": {
+              "id": 1,
+              "name": "portion-test"
+            }
+          }
+        }
+      ],
+      "id": 1
+    },
+    {
+      "id": 2,
+      "name": "Recette 2",
+      "recipeFoods": [
+        {
+          "id": 1,
+          "food": {
+            "id": 1,
+            "name": "Kiwi"
+          },
+          "conversionFactor": {
+            "id": 1,
+            "measure": {
+              "id": 1,
+              "name": "fruit moyen"
+            },
+            "factor": 0.69
+          },
+          "quantity": 3
+        }
+      ]
+    },
+    {
+      "name": "Repas 1",
+      "recipeFoods": [
+        {
+          "food": {
+            "id": 1,
+            "name": "Kiwi"
+          },
+          "quantity": 1,
+          "conversionFactor": {
+            "id": 1,
+            "factor": 0.5,
+            "measure": {
+              "id": 1,
+              "name": "portion-test"
+            }
+          }
+        }
+      ],
+      "id": 3
+    }
+  ]
+}
