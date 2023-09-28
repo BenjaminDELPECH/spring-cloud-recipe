@@ -15,41 +15,42 @@ interface RecipeRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recipe-list',
   template: `
-    <table mat-table [dataSource]="recipeListRows" class="mat-elevation-z8">
+    <div style="display: flex;height: 100%;width:100%;flex-flow: wrap">
+      <div style="width: 100%;">
+        <table mat-table [dataSource]="recipeListRows" style="padding:1rem;" class="mat-elevation-z2">
 
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Nom</th>
-        <td mat-cell *matCellDef="let element"
-        ><a [href]="element.id">{{element.name}}</a></td>
-      </ng-container>
-      <ng-container matColumnDef="recipeFoods">
-        <th mat-header-cell *matHeaderCellDef> Ingrédients</th>
-        <td mat-cell *matCellDef="let row"> {{row.recipeFoods}} </td>
-      </ng-container>
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>
-          <button mat-icon-button color="primary" label="lol" (click)="openRecipeDialog()">
-            <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
-          </button>
-        </th>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Nom</th>
+            <td mat-cell *matCellDef="let element"
+            ><a [href]="'recipes/'+element.id">{{element.name}}</a></td>
+          </ng-container>
+          <ng-container matColumnDef="recipeFoods">
+            <th mat-header-cell *matHeaderCellDef> Ingrédients</th>
+            <td mat-cell *matCellDef="let row"> {{row.recipeFoods}} </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>
+              <button mat-icon-button color="primary" label="lol" (click)="openRecipeDialog()">
+                <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
+              </button>
+            </th>
 
-        <td mat-cell *matCellDef="let row; let i=index;">
-          <button mat-icon-button color="primary" (click)="openRecipeDialog(row.id)">
-            <mat-icon aria-label="Edit">edit</mat-icon>
-          </button>
+            <td mat-cell *matCellDef="let row; let i=index;">
+              <button mat-icon-button color="primary" (click)="deleteRecipe(row.id)">
+                <mat-icon aria-label="Delete">delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
 
-          <button mat-icon-button color="primary" (click)="deleteRecipe(row.id)">
-            <mat-icon aria-label="Delete">delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns;"
-      ></tr>
-    </table>`,
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns;"
+          ></tr>
+        </table>
+      </div>
+    </div>
+  `,
   styleUrls: ['./recipe-list.component.css']
 })
 export class RecipeListComponent implements OnInit, OnDestroy {
@@ -85,7 +86,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   }
 
   deleteRecipe(recipeId: number) {
-    this.recipeService.deleteRecipe(recipeId)
+    this.recipeService.deleteRecipe(recipeId);
   }
 
   private mapToRows(value: Recipe[]) {

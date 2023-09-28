@@ -1,4 +1,116 @@
 {
+  "nutrients": [
+    {
+      "id": 1,
+      "name": "Calories",
+      "unit": "Cal",
+      "requirement": 2000
+    },
+    {
+      "id": 2,
+      "name": "Calcium",
+      "unit": "mg",
+      "requirement": 600
+    },
+    {
+      "id": 3,
+      "name": "Magnesium",
+      "unit": "mg",
+      "requirement": 500
+    },
+    {
+      "id": 4,
+      "name": "Fer",
+      "unit": "mg",
+      "requirement": 14
+    },
+    {
+      "id": 5,
+      "name": "Iode",
+      "unit": "μg",
+      "requirement": 150
+    },
+    {
+      "id": 6,
+      "name": "Zinc",
+      "unit": "μg",
+      "requirement": 150
+    }
+  ],
+  "foodNutrients": [
+    {
+      "id": 1,
+      "foodId": 1,
+      "nutrientId": 1,
+      "value": 100
+    },
+    {
+      "id": 2,
+      "foodId": 1,
+      "nutrientId": 2,
+      "value": 120
+    },
+    {
+      "id": 3,
+      "foodId": 1,
+      "nutrientId": 3,
+      "value": 10
+    },
+    {
+      "id": 4,
+      "foodId": 1,
+      "nutrientId": 4,
+      "value": 50
+    },
+    {
+      "id": 5,
+      "foodId": 1,
+      "nutrientId": 5,
+      "value": 33
+    },
+    {
+      "id": 6,
+      "foodId": 1,
+      "nutrientId": 6,
+      "value": 20
+    },
+    {
+      "id": 7,
+      "foodId": 2,
+      "nutrientId": 1,
+      "value": 60
+    },
+    {
+      "id": 8,
+      "foodId": 2,
+      "nutrientId": 2,
+      "value": 300
+    },
+    {
+      "id": 9,
+      "foodId": 2,
+      "nutrientId": 3,
+      "value": 100
+    },
+    {
+      "id": 10,
+      "foodId": 2,
+      "nutrientId": 4,
+      "value": 40
+    },
+    {
+      "id": 11,
+      "foodId": 2,
+      "nutrientId": 5,
+      "value": 5
+    },
+    {
+      "id": 12,
+      "foodId": 2,
+      "nutrientId": 6,
+      "value": 100
+    }
+  ],
   "foods-minimal": [
     {
       "id": 1,
@@ -11,9 +123,17 @@
   ],
   "conversionFactors": [
     {
-      "id": "1",
+      "id": 1,
+      "factor": 0.5,
       "measure": {
-        "id": "1",
+        "id": 1,
+        "name": "portion-test"
+      }
+    },
+    {
+      "id": 2,
+      "measure": {
+        "id": 2,
         "name": "fruit moyen"
       },
       "factor": 0.69
@@ -27,23 +147,24 @@
   ],
   "recipes": [
     {
-      "name": "Recette 1 - gouter - edit",
+      "name": "Premiere recette",
       "recipeFoods": [
         {
-          "id": 2,
           "food": {
             "id": 2,
             "name": "Banane"
           },
-          "quantity": 1,
           "conversionFactor": {
-            "id": 1,
-            "factor": 0.5,
+            "id": 2,
             "measure": {
-              "id": 1,
-              "name": "portion-test"
-            }
-          }
+              "id": 2,
+              "name": "fruit moyen"
+            },
+            "factor": 0.69
+          },
+          "quantity": "4",
+          "meal": {},
+          "id": 2
         },
         {
           "id": 1,
@@ -51,6 +172,7 @@
             "id": 1,
             "name": "Kiwi"
           },
+          "meal": {},
           "quantity": 1,
           "conversionFactor": {
             "id": 1,
@@ -65,36 +187,13 @@
       "id": 1
     },
     {
-      "id": 2,
-      "name": "Recette 2",
-      "recipeFoods": [
-        {
-          "id": 1,
-          "food": {
-            "id": 1,
-            "name": "Kiwi"
-          },
-          "conversionFactor": {
-            "id": 1,
-            "measure": {
-              "id": 1,
-              "name": "fruit moyen"
-            },
-            "factor": 0.69
-          },
-          "quantity": 3
-        }
-      ]
-    },
-    {
-      "name": "Repas 1",
+      "name": "deuxième recette",
       "recipeFoods": [
         {
           "food": {
-            "id": 1,
-            "name": "Kiwi"
+            "id": 2,
+            "name": "Banane"
           },
-          "quantity": 1,
           "conversionFactor": {
             "id": 1,
             "factor": 0.5,
@@ -102,7 +201,33 @@
               "id": 1,
               "name": "portion-test"
             }
-          }
+          },
+          "quantity": "10",
+          "meal": {},
+          "id": 2
+        }
+      ],
+      "id": 2
+    },
+    {
+      "name": "recette 3",
+      "recipeFoods": [
+        {
+          "food": {
+            "id": 1,
+            "name": "Kiwi"
+          },
+          "conversionFactor": {
+            "id": 2,
+            "measure": {
+              "id": 2,
+              "name": "fruit moyen"
+            },
+            "factor": 0.69
+          },
+          "quantity": "10",
+          "meal": {},
+          "id": 2
         }
       ],
       "id": 3

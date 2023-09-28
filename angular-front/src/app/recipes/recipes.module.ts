@@ -18,9 +18,13 @@ import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatGridListModule} from "@angular/material/grid-list";
+import {RecipeFoodDialogComponent} from "./dialogs/recipe-food-dialog/recipe-food-dialog.component";
+import {SearchAddFoodComponent} from "./components/search-add-food/search-add-food.component";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {NutritionalValuesComponent} from './components/nutritional-values/nutritional-values.component';
 
 @NgModule({
-  declarations: [RecipeListComponent, RecipeDetailsComponent, RecipeDialogComponent],
+  declarations: [RecipeListComponent, RecipeDetailsComponent, RecipeDialogComponent, RecipeFoodDialogComponent, SearchAddFoodComponent, SearchAddFoodComponent, NutritionalValuesComponent],
   imports: [
     MatDialogModule,
     CommonModule,
@@ -37,7 +41,8 @@ import {MatGridListModule} from "@angular/material/grid-list";
     MatSelectModule,
     MatAutocompleteModule,
     FormsModule,
-    MatGridListModule
+    MatGridListModule,
+    MatProgressBarModule
   ],
   exports: [
     RouterModule

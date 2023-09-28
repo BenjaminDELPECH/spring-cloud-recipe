@@ -15,7 +15,7 @@ import {routes} from "./app-routing.module";
         <div fxShow="true" fxHide.lt-md>
           <!-- The following menu items will be hidden on both SM and XS screen sizes -->
           <ng-template ngFor [ngForOf]="routes" let-route>
-            <a [href]="route.path" mat-button>
+            <a [routerLink]="route.path" mat-button>
               {{route.path}}
             </a>
           </ng-template>
@@ -26,13 +26,13 @@ import {routes} from "./app-routing.module";
       <mat-sidenav #sidenav>
         <mat-nav-list>
           <ng-template ngFor let-route [ngForOf]="routes">
-            <a [href]="route.path" mat-list-item>
+            <a [routerLink]="route.path" mat-list-item>
               {{route.path}}
             </a>
           </ng-template>
         </mat-nav-list>
       </mat-sidenav>
-      <mat-sidenav-content fxFlexFill class="" style="">
+      <mat-sidenav-content style="padding:1rem;">
         <router-outlet></router-outlet>
       </mat-sidenav-content>
     </mat-sidenav-container>`,

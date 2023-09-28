@@ -1,0 +1,10 @@
+.percentage {
+  height: var(--bar-height);
+}
+
+.bar {
+  width: 100%;
+  display: flex;
+  height: var(--bar-height);
+  background-color: #f2f2f1
+}
