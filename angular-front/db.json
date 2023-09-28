@@ -202,7 +202,7 @@
               "name": "portion-test"
             }
           },
-          "quantity": "10",
+          "quantity": "12",
           "meal": {},
           "id": 2
         }
@@ -231,6 +231,29 @@
         }
       ],
       "id": 3
+    },
+    {
+      "name": "recette 4",
+      "recipeFoods": [
+        {
+          "food": {
+            "id": 1,
+            "name": "Kiwi"
+          },
+          "conversionFactor": {
+            "id": 2,
+            "measure": {
+              "id": 2,
+              "name": "fruit moyen"
+            },
+            "factor": 0.69
+          },
+          "quantity": "2",
+          "meal": {},
+          "id": 2
+        }
+      ],
+      "id": 4
     }
   ]
 }

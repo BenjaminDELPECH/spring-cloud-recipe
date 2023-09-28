@@ -4,7 +4,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {RecipeService} from "../../services/recipe.service";
 import {RecipeFood} from "../../models/RecipeFood";
 import {ConversionFactor} from "../../models/ConversionFactor";
-import {BehaviorSubject, take} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 import {ConversionFactorService} from "../../services/conversion-factor.service";
 import {Food} from "../../models/Food";
 
@@ -120,7 +120,7 @@ export class RecipeFoodDialogComponent {
   }
 
   private initializeConversionFactor() {
-    this.conversionFactorService.getConversionFactors().pipe(take(1))
+    this.conversionFactorService.getConversionFactors()
       .subscribe(value => {
         this.conversionFactorsSubject.next(value);
         if (this.data.recipeFood?.conversionFactor) {

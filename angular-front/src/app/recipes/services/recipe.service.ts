@@ -24,7 +24,10 @@ export class RecipeService {
   private _recipeNutritionalValues: BehaviorSubject<RecipeNutritionalValues | null> = new BehaviorSubject<RecipeNutritionalValues | null>(null);
   public readonly recipeNutritionalValues: Observable<RecipeNutritionalValues | null> = this._recipeNutritionalValues.asObservable();
 
-  constructor(private httpClient: HttpClient, private nutrient: NutrientService, private nutritionService: NutritionService) {
+  constructor(private httpClient: HttpClient,
+              private nutrient: NutrientService,
+              private nutritionService: NutritionService
+  ) {
   }
 
   loadRecipes() {
@@ -70,36 +73,39 @@ export class RecipeService {
   }
 
   createRecipe(value: Recipe) {
-    this.httpClient.post<Recipe>(this.getBaseUrl(), value).subscribe(response => {
-      console.log(response);
-      const recipes = this._recipes.value
-      recipes.push(response)
-      this._recipes.next(recipes)
-      this.loadRecipeNutritionalValues(response)
-    })
+    this.httpClient.post<Recipe>(this.getBaseUrl(), value)
+      .subscribe(response => {
+        console.log(response);
+        const recipes = this._recipes.value
+        recipes.push(response)
+        this._recipes.next(recipes)
+        this.loadRecipeNutritionalValues(response)
+      })
   }
 
   updateRecipe(id: number, value: Recipe) {
-    this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + id, value).subscribe(response => {
-      console.log(value)
-      const recipes = this._recipes.value
-      const index = recipes.findIndex(e => e.id === response.id)
-      recipes[index] = response
-      this._recipes.next(recipes)
-      this.loadRecipes()
-      this.loadRecipeNutritionalValues(response)
-    })
+    this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + id, value)
+      .subscribe(response => {
+        console.log(value)
+        const recipes = this._recipes.value
+        const index = recipes.findIndex(e => e.id === response.id)
+        recipes[index] = response
+        this._recipes.next(recipes)
+        this.loadRecipes()
+        this.loadRecipeNutritionalValues(response)
+      })
   }
 
   addRecipeFood(recipeId: number, recipeFood: RecipeFood) {
     recipeFood.id = Math.round(Math.random() * 1000000)
     const recipe = this._recipe.value
     recipe?.recipeFoods.push(recipeFood)
-    return this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId, recipe).subscribe(response => {
-      this._recipe.next(response)
-      this.loadRecipes()
-      this.loadRecipeNutritionalValues(response)
-    })
+    return this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId, recipe)
+      .subscribe(response => {
+        this._recipe.next(response)
+        this.loadRecipes()
+        this.loadRecipeNutritionalValues(response)
+      })
   }
 
   updateRecipeFood(recipeId: number, recipeFoodId: number, recipeFood: RecipeFood) {
@@ -110,11 +116,12 @@ export class RecipeService {
     }
     recipeFood.id = recipeFoodId
     recipe!.recipeFoods[i!] = recipeFood
-    return this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId, recipe).subscribe(response => {
-      this._recipe.next(response)
-      this.loadRecipes()
-      this.loadRecipeNutritionalValues(response)
-    })
+    return this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId, recipe)
+      .subscribe(response => {
+        this._recipe.next(response)
+        this.loadRecipes()
+        this.loadRecipeNutritionalValues(response);
+      })
   }
 
   deleteRecipeFood(recipeId: string, recipeFood: RecipeFood) {
@@ -125,19 +132,22 @@ export class RecipeService {
     }
     recipe!.recipeFoods = recipe!.recipeFoods.filter(e => e.id !== recipeFood.id)
     this._recipe.next(recipe);
-    this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId, recipe).subscribe(response => {
-      this._recipe.next(response)
-      this.loadRecipes()
-      this.loadRecipeNutritionalValues(response)
-    })
+    this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId, recipe)
+      .subscribe(response => {
+        this._recipe.next(response)
+        this.loadRecipes()
+        this.loadRecipeNutritionalValues(response)
+
+      })
 
   }
 
   deleteRecipe(id: number) {
-    this.httpClient.delete<void>(this.getBaseUrl() + "/" + id).subscribe(response => {
-      console.log(response)
-      const recipes = this._recipes.value.filter(e => e.id !== id)
-      this._recipes.next(recipes)
-    })
+    this.httpClient.delete<void>(this.getBaseUrl() + "/" + id)
+      .subscribe(response => {
+        console.log(response)
+        const recipes = this._recipes.value.filter(e => e.id !== id)
+        this._recipes.next(recipes)
+      })
   }
 }
