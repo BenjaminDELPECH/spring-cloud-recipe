@@ -8,6 +8,8 @@
         <option value="$PROJECT_DIR$/spring-boot-cloud/service-registry/pom.xml" />
         <option value="$PROJECT_DIR$/spring-boot-cloud/recipe-manager/pom.xml" />
         <option value="$PROJECT_DIR$/spring-boot-cloud/config-server/pom.xml" />
+        <option value="$PROJECT_DIR$/spring-boot-cloud/user-service/pom.xml" />
+        <option value="$PROJECT_DIR$/spring-boot-cloud/shared-backend/pom.xml" />
       </list>
     </option>
     <option name="workspaceImportForciblyTurnedOn" value="true" />
