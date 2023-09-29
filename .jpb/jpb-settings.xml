@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+    <component name="DatabaseMigrationSettings"
+               lastSelectedDirectory="spring-boot-cloud\user-service\src\main\resources\db.migration"/>
+    <component name="PersistenceUnitSettings">
+        <persistence-units>
+            <persistence-unit moduleName="user-service" name="Default">
+                <packages>
+                    <package value="com.delpech.userservice"/>
+                </packages>
+            </persistence-unit>
+            <persistence-unit moduleName="recipe-manager" name="Default">
+                <packages>
+                    <package value="com.recipemanager.recipemanager"/>
+                </packages>
+            </persistence-unit>
+        </persistence-units>
+    </component>
+</project>

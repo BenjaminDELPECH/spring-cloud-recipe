@@ -3,6 +3,7 @@ package com.delpech.userservice.services;
 import com.delpech.userservice.entities.RefreshToken;
 import com.delpech.userservice.entities.RefreshTokenRepository;
 import com.delpech.userservice.entities.User;
+import com.delpech.userservice.entities.UserRole;
 import com.delpech.userservice.enums.RoleType;
 import com.delpech.userservice.repository.UserRepository;
 import com.delpech.userservice.responses.JwtResponse;
@@ -23,6 +24,7 @@ import utils.JwtTokenProvider;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Import(JwtTokenProvider.class)
@@ -43,7 +45,9 @@ public class UserService implements UserDetailsService {
     public JwtResponse getJwtResponse(String googleId) throws GeneralSecurityException, IOException {
         User user = findOrCreateUserFromGoogleId(googleId);
         String token = jwtTokenProvider.generateToken(
-                user.getId(), user.getRoles().stream().map(Enum::toString)
+                user.getId(), user.getRoles().stream()
+                        .map(UserRole::getRoleType)
+                        .map(Enum::toString)
                         .toList());
         RefreshToken refreshToken = new RefreshToken(user);
         refreshTokenRepository.save(refreshToken);
@@ -51,7 +55,8 @@ public class UserService implements UserDetailsService {
                 token,
                 refreshToken.getToken(),
                 user.getUsername(),
-                user.getRoles()
+                user.getRoles().stream()
+                        .map(UserRole::getRoleType).collect(Collectors.toSet())
         );
     }
 
@@ -64,7 +69,9 @@ public class UserService implements UserDetailsService {
             user = new User();
             user.setIsGoogleAccount(true);
             user.setEmail(email);
-            user.getRoles().add(RoleType.USER);
+            user.getRoles().add(
+                    new UserRole(RoleType.USER)
+            );
             return userRepository.save(user);
         } else {
             return googleUser.get();
