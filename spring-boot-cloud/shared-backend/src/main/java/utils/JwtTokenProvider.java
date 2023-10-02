@@ -20,7 +20,7 @@ public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-
+    // todo -> jwt secret should changes?
     private final String jwtSecret;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret) {

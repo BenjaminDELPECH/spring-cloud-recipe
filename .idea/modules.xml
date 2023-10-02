@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-cloud/food-nutrients/food-nutrients.iml" filepath="$PROJECT_DIR$/spring-boot-cloud/food-nutrients/food-nutrients.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spring-boot-cloud/recipe-manager/recipe-manager.iml" filepath="$PROJECT_DIR$/spring-boot-cloud/recipe-manager/recipe-manager.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/springboot-angular-fullstack-app-my-recipes.iml" filepath="$PROJECT_DIR$/.idea/springboot-angular-fullstack-app-my-recipes.iml" />
     </modules>
   </component>

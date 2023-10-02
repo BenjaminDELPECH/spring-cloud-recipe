@@ -57,7 +57,7 @@ export class RecipeService {
     })
     const foodIdList: number[] = recipeFoods.map(e => e.food.id!)
     const nutrients$ = this.nutrient.getNutrients()
-    const foodNutrients$ = this.httpClient.get<FoodNutrient[]>(this.BASE_URL + "/foodNutrients")
+    const foodNutrients$ = this.httpClient.get<FoodNutrient[]>(this.BASE_URL + `/food-nutrients/${recipe.id}`)
     forkJoin(({nutrients$, foodNutrients$}))
       .subscribe(value => {
         const nutritionalValues = this.nutritionService.getNutritionalValues(value, foodIdList, recipeFoodByFoodIdMap);
@@ -97,47 +97,29 @@ export class RecipeService {
   }
 
   addRecipeFood(recipeId: number, recipeFood: RecipeFood) {
-    recipeFood.id = Math.round(Math.random() * 1000000)
-    const recipe = this._recipe.value
-    recipe?.recipeFoods.push(recipeFood)
-    return this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId, recipe)
+    return this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId + "/add-recipe-food", recipeFood)
       .subscribe(response => {
-        this._recipe.next(response)
-        this.loadRecipes()
-        this.loadRecipeNutritionalValues(response)
-      })
-  }
-
-  updateRecipeFood(recipeId: number, recipeFoodId: number, recipeFood: RecipeFood) {
-    const recipe = this._recipe.value
-    const i = recipe?.recipeFoods.findIndex(e => e.id === recipeFoodId)
-    if (i === -1) {
-      console.error('not found')
-    }
-    recipeFood.id = recipeFoodId
-    recipe!.recipeFoods[i!] = recipeFood
-    return this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId, recipe)
-      .subscribe(response => {
-        this._recipe.next(response)
-        this.loadRecipes()
+        this._recipe.next(response);
         this.loadRecipeNutritionalValues(response);
       })
   }
 
-  deleteRecipeFood(recipeId: string, recipeFood: RecipeFood) {
-    const recipe = this._recipe.value
-    const i = recipe?.recipeFoods.findIndex(e => e.id === recipeFood.id)
-    if (i === -1) {
-      console.error('not found')
-    }
-    recipe!.recipeFoods = recipe!.recipeFoods.filter(e => e.id !== recipeFood.id)
-    this._recipe.next(recipe);
-    this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId, recipe)
+  updateRecipeFood(recipeFoodId: number, recipeFood: RecipeFood) {
+    recipeFood.id = recipeFoodId
+    return this.httpClient.put<Recipe>(
+      this.getBaseUrl() + "/update-recipe-food/" + recipeFoodId,
+      recipeFood)
       .subscribe(response => {
         this._recipe.next(response)
-        this.loadRecipes()
-        this.loadRecipeNutritionalValues(response)
+        this.loadRecipeNutritionalValues(response);
+      })
+  }
 
+  deleteRecipeFood(recipeFood: RecipeFood) {
+    this.httpClient.delete<Recipe>(this.getBaseUrl() + "/" + recipeFood.id)
+      .subscribe(response => {
+        this._recipe.next(response)
+        this.loadRecipeNutritionalValues(response)
       })
 
   }

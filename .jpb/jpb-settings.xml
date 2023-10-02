@@ -4,7 +4,7 @@
                lastSelectedDirectory="spring-boot-cloud\user-service\src\main\resources\db.migration"/>
     <component name="PersistenceUnitSettings">
         <persistence-units>
-            <persistence-unit moduleName="user-service" name="Default">
+            <persistence-unit moduleName="user-service" name="Default" defaultSearchScope="Project">
                 <packages>
                     <package value="com.delpech.userservice"/>
                 </packages>
@@ -12,6 +12,11 @@
             <persistence-unit moduleName="recipe-manager" name="Default">
                 <packages>
                     <package value="com.recipemanager.recipemanager"/>
+                </packages>
+            </persistence-unit>
+            <persistence-unit moduleName="food-nutrients" name="Default">
+                <packages>
+                    <package value="com.recipemanager.foodnutrients"/>
                 </packages>
             </persistence-unit>
         </persistence-units>
