@@ -1,12 +1,11 @@
 package com.delpech.userservice.entities;
 
-import com.delpech.userservice.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Objects;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @NoArgsConstructor
 @Getter
@@ -18,23 +17,18 @@ public class UserRole {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private RoleType roleType;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "role_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    private Role role;
 
-    public UserRole(RoleType roleType) {
-        this.roleType = roleType;
-    }
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserRole userRole = (UserRole) o;
-        return roleType == userRole.roleType;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(roleType);
+    public UserRole(Role role, User user) {
+        this.role = role;
+        this.user = user;
     }
 }

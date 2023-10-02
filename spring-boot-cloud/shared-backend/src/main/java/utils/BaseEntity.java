@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
+
 @DynamicUpdate
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
@@ -30,12 +31,12 @@ public abstract class BaseEntity {
     @JsonIgnore
     @CreatedBy
     @JoinColumn(name = "created_by", updatable = false)
-    private Long createdByUserId;
+    private Long created_by;
 
     @JsonIgnore
     @LastModifiedBy
     @JoinColumn(name = "updated_by")
-    private Long updateByUserId;
+    private Long updated_by;
 
     public Long getId() {
         return id;
@@ -49,11 +50,11 @@ public abstract class BaseEntity {
         return updatedAt;
     }
 
-    public Long getCreatedByUserId() {
-        return createdByUserId;
+    public Long getCreated_by() {
+        return created_by;
     }
 
-    public Long getUpdateByUserId() {
-        return updateByUserId;
+    public Long getUpdated_by() {
+        return updated_by;
     }
 }

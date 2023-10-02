@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import utils.BaseEntity;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,27 +24,32 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
     private Boolean isGoogleAccount = Boolean.FALSE;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "user_user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "user_role_id")
     )
-    private Set<UserRole> roles;
+    private Set<UserRole> roles = new HashSet<>();
+
+
+    public void addRole(Role role) {
+        this.roles.add(new UserRole(role, this));
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
-                .map(e -> new SimpleGrantedAuthority(e.getRoleType().toString()))
+                .map(e -> new SimpleGrantedAuthority(e.getRole().getRoleType().toString()))
                 .toList();
     }
 
     public List<String> getRoleAsStringList() {
-        return this.roles.stream().map(e -> e.getRoleType().toString()).toList();
+        return this.roles.stream().map(e -> e.getRole().getRoleType().toString()).toList();
     }
 
     public List<RoleType> getRoleTypeList() {
-        return this.roles.stream().map(UserRole::getRoleType).toList();
+        return this.roles.stream().map(e -> e.getRole().getRoleType()).toList();
     }
 
     @Override
