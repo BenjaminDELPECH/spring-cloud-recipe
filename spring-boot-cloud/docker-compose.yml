@@ -3,7 +3,7 @@ services:
   postgres_recipe_manager:
     image: postgres
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data-recipe-manager:/var/lib/postgresql/data
     ports:
       - "${RECIPE_MANAGER_SERVICE_DB_PORT}:${DB_PORT}"
     environment:
@@ -14,7 +14,7 @@ services:
   postgres_food_nutrients:
     image: postgres
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data-foot-nutrients:/var/lib/postgresql/data
     ports:
       - "${FOOD_NUTRIENTS_SERVICE_DB_PORT}:${DB_PORT}"
     environment:
@@ -33,5 +33,6 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
 volumes:
-  postgres-data:
+  postgres-data-recipe-manager:
+  postgres-data-foot-nutrients:
   postgres-data-user:

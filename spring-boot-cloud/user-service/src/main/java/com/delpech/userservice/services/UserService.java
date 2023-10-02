@@ -1,10 +1,13 @@
 package com.delpech.userservice.services;
 
+import com.delpech.userservice.dto.SignInRequest;
+import com.delpech.userservice.dto.SignUpRequest;
 import com.delpech.userservice.entities.RefreshToken;
 import com.delpech.userservice.entities.RefreshTokenRepository;
 import com.delpech.userservice.entities.User;
 import com.delpech.userservice.entities.UserRole;
 import com.delpech.userservice.enums.RoleType;
+import com.delpech.userservice.exceptions.UserAlreadyExistException;
 import com.delpech.userservice.repository.UserRepository;
 import com.delpech.userservice.responses.JwtResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -12,51 +15,43 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import jakarta.ws.rs.NotFoundException;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import utils.JwtTokenProvider;
+import utils.UserUtils;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Service
 @Import(JwtTokenProvider.class)
-public class UserService implements UserDetailsService {
+public class UserService {
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-
+    private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public UserService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository, JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     public JwtResponse getJwtResponse(String googleId) throws GeneralSecurityException, IOException {
         User user = findOrCreateUserFromGoogleId(googleId);
-        String token = jwtTokenProvider.generateToken(
-                user.getId(), user.getRoles().stream()
-                        .map(UserRole::getRoleType)
-                        .map(Enum::toString)
-                        .toList());
-        RefreshToken refreshToken = new RefreshToken(user);
-        refreshTokenRepository.save(refreshToken);
-        return new JwtResponse(
-                token,
-                refreshToken.getToken(),
-                user.getUsername(),
-                user.getRoles().stream()
-                        .map(UserRole::getRoleType).collect(Collectors.toSet())
+        return getJwtResponseEntity(
+                user.getEmail(),
+                user.getPassword()
         );
     }
 
@@ -78,11 +73,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) {
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
+
 
     public GoogleIdToken.Payload getGoogleEmailFromGoogleToken(String googleToken) throws IOException, GeneralSecurityException {
         String externalId;
@@ -97,5 +88,58 @@ public class UserService implements UserDetailsService {
         externalId = token.getPayload().getEmail();
 
         return token.getPayload();
+    }
+
+    public Boolean signUp(SignUpRequest signUpRequest) throws UserAlreadyExistException {
+        String email = signUpRequest.email();
+        String password = signUpRequest.password();
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            throw new UserAlreadyExistException("Un utilisateur avec cet email existe déjà");
+        }
+        String encodedPassword = passwordEncoder.encode(password);
+
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setPassword(encodedPassword);
+        newUser.getRoles().add(new UserRole(RoleType.USER));
+
+        userRepository.save(newUser);
+
+        return true;
+    }
+
+    private User getUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(NotFoundException::new);
+    }
+
+    public JwtResponse signIn(SignInRequest signInRequest) {
+        return getJwtResponseEntity(
+                signInRequest.email(),
+                signInRequest.password()
+        );
+    }
+
+    private JwtResponse getJwtResponseEntity(String email, String password) {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                email, password
+        );
+        Authentication authentication = authenticationManager.authenticate(
+                usernamePasswordAuthenticationToken
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        User user = userRepository.findByEmail(email).orElseThrow(NotFoundException::new);
+
+        String jwt = jwtTokenProvider.generateToken(UserUtils.getUserId(), user.getRoleAsStringList());
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+        return new JwtResponse(
+                jwt,
+                refreshToken.getToken(),
+                user.getUsername(),
+                user.getRoleTypeList()
+        );
     }
 }

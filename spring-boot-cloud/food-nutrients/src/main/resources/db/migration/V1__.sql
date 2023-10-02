@@ -25,14 +25,14 @@ CREATE TABLE conversion_factor
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     created_by BIGINT,
     updated_by BIGINT,
-    food_id    BIGINT,
-    measure_id BIGINT,
+    food_id    BIGINT NOT NULL,
+    measure_id BIGINT NOT NULL,
     factor     FLOAT,
     CONSTRAINT pk_conversion_factor PRIMARY KEY (id)
 );
 
 ALTER TABLE conversion_factor
-    ADD CONSTRAINT FK_CONVERSION_FACTOR_ON_FOOD FOREIGN KEY (food_id) REFERENCES food (id);
+    ADD CONSTRAINT FK_CONVERSION_FACTOR_ON_FOOD FOREIGN KEY (food_id) REFERENCES food (id) ON DELETE CASCADE;
 
 ALTER TABLE conversion_factor
     ADD CONSTRAINT FK_CONVERSION_FACTOR_ON_MEASURE FOREIGN KEY (measure_id) REFERENCES measure (id);
