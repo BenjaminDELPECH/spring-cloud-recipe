@@ -1,6 +1,6 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
-import {Food} from "../../models/Food";
-import {BehaviorSubject, debounceTime, fromEvent, map, take, tap} from "rxjs";
+import {Food, FoodMinimal} from "../../models/Food";
+import {BehaviorSubject, debounceTime, filter, fromEvent, map, switchMap, take, tap} from "rxjs";
 import {FoodService} from "../../services/food.service";
 
 @Component({
@@ -27,10 +27,10 @@ import {FoodService} from "../../services/food.service";
 })
 export class SearchAddFoodComponent implements AfterViewInit {
   @Input()
-  showLastSelected: boolean = false
+  showLastSelected: boolean = false;
 
-  foods: Food[] = []
-  filteredFoods: BehaviorSubject<Food[]> = new BehaviorSubject<Food[]>([]);
+  foods: FoodMinimal[] = []
+  filteredFoods: BehaviorSubject<FoodMinimal[]> = new BehaviorSubject<FoodMinimal[]>([]);
 
   @Input()
   alreadyAddedFoods: Food[] = []
@@ -39,11 +39,6 @@ export class SearchAddFoodComponent implements AfterViewInit {
   addFoodEmitter: EventEmitter<Food> = new EventEmitter<Food>();
 
   constructor(private foodService: FoodService) {
-    this.foodService.getFoods().pipe(
-      take(1)
-    ).subscribe(value => {
-      this.foods = value
-    })
   }
 
   ngAfterViewInit(): void {
@@ -53,9 +48,11 @@ export class SearchAddFoodComponent implements AfterViewInit {
     }
     const foodSearch$ = fromEvent<any>(foodSearch!, 'input')
     foodSearch$.pipe(
-      debounceTime(50),
+      debounceTime(100),
       tap(console.log),
       map(value => value.target.value),
+      filter(value => value.length >= 2),
+      switchMap(value => this.foodService.searchFoods(value)),
       map(e => this.filterFoodMinimals(e))
     ).subscribe(value => {
       this.filteredFoods.next(value)
@@ -63,12 +60,16 @@ export class SearchAddFoodComponent implements AfterViewInit {
     })
   }
 
-  addFood(food: Food) {
+  addFood(food: FoodMinimal) {
     this.filteredFoods.next(this.foods)
-    this.addFoodEmitter.emit(food)
+    this.foodService.getCompleteFood(food).pipe(
+      take(1)
+    ).subscribe(food => {
+      this.addFoodEmitter.emit(food)
+    })
   }
 
-  clickAddFood(option: Food, foodSearch: HTMLInputElement) {
+  clickAddFood(option: FoodMinimal, foodSearch: HTMLInputElement) {
     this.addFood(option);
     if (this.showLastSelected) {
       foodSearch.value = option.name
@@ -77,9 +78,8 @@ export class SearchAddFoodComponent implements AfterViewInit {
     foodSearch.value = ''
   }
 
-  private filterFoodMinimals(e: string) {
-    return this.foods
-      .filter(e => !this.alreadyAddedFoods.find(e2 => e.id === e2.id))
-      .filter(food => food.name.toLowerCase().includes(e.toLowerCase()));
+  private filterFoodMinimals(foodSearchResults: FoodMinimal[]) {
+    return foodSearchResults
+      .filter(e1 => this.alreadyAddedFoods.findIndex(e2 => e2.id === e1.id) === -1)
   }
 }

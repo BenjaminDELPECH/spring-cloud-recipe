@@ -11,7 +11,6 @@ export class SnackbarInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    debugger
     return next.handle(request).pipe(
       tap(e => {
         if (request.method == "POST" || request.method == "PUT")

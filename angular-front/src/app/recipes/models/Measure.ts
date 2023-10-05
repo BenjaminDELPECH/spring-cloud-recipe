@@ -1,4 +1,5 @@
 export interface Measure {
   id: number,
-  name: string
+  name: string,
+  nameFrench: string
 }

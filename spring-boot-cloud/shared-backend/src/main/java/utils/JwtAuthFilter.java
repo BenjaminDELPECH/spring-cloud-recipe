@@ -30,17 +30,31 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    public static String removeBearer(String authToken) {
+        if (authToken.startsWith("Bearer ")) {
+            authToken = authToken.substring(7);
+        }
+        authToken = authToken.trim();
+        return authToken;
+    }
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
         String jwt = request.getHeader("Authorization");
-
+        if (jwt == null || jwt.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        jwt = removeBearer(jwt);
         try {
             if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
                 Long userId = jwtTokenProvider.getUserIdFromToken(jwt);
                 List<GrantedAuthority> authorities = jwtTokenProvider.getAuthoritiesFromToken(jwt);
 
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userId, jwt, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (JwtException ex) {

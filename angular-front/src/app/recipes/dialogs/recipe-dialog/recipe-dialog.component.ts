@@ -5,56 +5,84 @@ import {RecipeService} from "../../services/recipe.service";
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Food} from "../../models/Food";
 import {RecipeFood} from "../../models/RecipeFood";
+import {ConversionFactor} from "../../models/ConversionFactor";
 
 @Component({
   selector: 'app-recipe-dialog',
   template: `
-    <h1 mat-dialog-title>{{getTitle()}}</h1>
-    <div mat-dialog-content>
-      <form [formGroup]="recipeForm" (ngSubmit)="onSubmitRecipe()" fxFlexFill fxFlexAlign>
-        <mat-form-field>
-          <input matInput
-                 placeholder="Nom du repas"
-                 formControlName="name"
-                 required>
-          <mat-error *ngIf="isFieldError('name') ">
-            <div *ngIf="recipeForm.get('name')?.hasError('minlength')">
-              Le nom doit faire 5 caractères minimum
-            </div>
-            <div *ngIf="recipeForm.get('name')?.hasError('maxlength')">
-              Le nom doit faire 255 caractères maximum
-            </div>
-            <div *ngIf="recipeForm.get('name')?.hasError('required')">
-              Le nom est obligatoire
-            </div>
-          </mat-error>
-        </mat-form-field>
+      <h1 mat-dialog-title>{{getTitle()}}</h1>
+      <div mat-dialog-content>
+          <form [formGroup]="recipeForm" (ngSubmit)="onSubmitRecipe()" fxFlexFill fxFlexAlign>
+              <mat-form-field>
+                  <input matInput
+                         placeholder="Nom du repas"
+                         formControlName="name"
+                         required>
+                  <mat-error *ngIf="isFieldError('name') ">
+                      <div *ngIf="recipeForm.get('name')?.hasError('minlength')">
+                          Le nom doit faire 5 caractères minimum
+                      </div>
+                      <div *ngIf="recipeForm.get('name')?.hasError('maxlength')">
+                          Le nom doit faire 255 caractères maximum
+                      </div>
+                      <div *ngIf="recipeForm.get('name')?.hasError('required')">
+                          Le nom est obligatoire
+                      </div>
+                  </mat-error>
+              </mat-form-field>
 
 
-        <app-search-add-food
-          (addFoodEmitter)="addRecipeFood($event)"
-          [alreadyAddedFoods]="alreadyAddedFoods"
-        />
+              <app-search-add-food
+                      (addFoodEmitter)="addRecipeFood($event)"
+                      [alreadyAddedFoods]="alreadyAddedFoods"
+              />
 
-      </form>
-      <mat-divider></mat-divider>
-      <mat-list>
-        <mat-list-item *ngFor="let food of foods.controls">
-          <div fxLayout="row" fxFlexFill>
-            <div fxLayoutAlign="center center">{{food.value.name}}</div>
-            <div fxFlexOffset="auto">
-              <button mat-icon-button color="primary" (click)="removeRecipeFood(food.value)">
-                <mat-icon aria-label="Delete">delete</mat-icon>
-              </button>
-            </div>
+
+            <mat-list formArrayName="foods">
+              <mat-list-item *ngFor="let recipeFood of recipeFoods.controls; let i = index" [formGroupName]="i">
+                <div fxLayout="row" fxFlexFill>
+                  <div fxLayoutAlign="center center">{{recipeFood.value.food.name}}</div>
+                  <div>
+                    <mat-form-field>
+                      <mat-label>Quantité</mat-label>
+                      <input matInput placeholder="Quantité"
+                             formControlName="quantity"
+                             type="number"
+                             required>
+                    </mat-form-field>
+                  </div>
+                  <div>
+                    <mat-form-field>
+                      <mat-label>Portion</mat-label>
+                      <mat-select formControlName="conversionFactor">
+                        <ng-container *ngIf="recipeFood.value.food.conversionFactors">
+                          <mat-option
+                            *ngFor="let conversionFactor of recipeFood.value.food.conversionFactors"
+                            [value]="conversionFactor">
+                            {{conversionFactor.measure.name}}
+                          </mat-option>
+                        </ng-container>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                  <div fxFlexOffset="auto">
+                    <button mat-icon-button color="primary" (click)="removeRecipeFood(recipeFood.value)">
+                      <mat-icon aria-label="Delete">delete</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </mat-list-item>
+            </mat-list>
+
+          </form>
+          <mat-divider></mat-divider>
+
+          <div mat-dialog-actions>
+              <button mat-button (click)="dialogRef.close()">Close</button>
+              <button mat-button (click)="onSubmitRecipe()">Valider</button>
           </div>
-        </mat-list-item>
-      </mat-list>
-      <div mat-dialog-actions>
-        <button mat-button (click)="dialogRef.close()">Close</button>
-        <button mat-button (click)="onSubmitRecipe()">Valider</button>
       </div>
-    </div>
   `,
   styleUrls: ['./recipe-dialog.component.css']
 })
@@ -67,15 +95,15 @@ export class RecipeDialogComponent {
               private recipeService: RecipeService,
   ) {
     this.recipeForm = this.initializeForm();
+    console.log(this.recipeForm)
+  }
+
+  get recipeFoods(): FormArray<FormGroup> {
+    return <FormArray<FormGroup>>this.recipeForm.get('foods')
   }
 
   protected get alreadyAddedFoods(): Food[] {
-    return this.foods.controls.map(e => e.value)
-  }
-
-  removeRecipeFood(foodMinimal: Food) {
-    const index = this.foods.value.findIndex(e => e.id === foodMinimal.id)
-    this.foods.removeAt(index)
+    return this.recipeFoods.controls.map(e => e.value).map(e => e.food)
   }
 
   isFieldError(fieldName: string) {
@@ -87,13 +115,16 @@ export class RecipeDialogComponent {
     return field.invalid && field.errors && (field.dirty || field.touched)
   }
 
-  get foods(): FormArray<FormControl<Food>> {
-    return <FormArray<FormControl>>this.recipeForm.get('foods')
+  removeRecipeFood(recipeFood: RecipeFood) {
+    const index = this.recipeFoods.value.findIndex(e => e.food.id === recipeFood.food.id)
+    this.recipeFoods.removeAt(index)
   }
 
-  addRecipeFood(foodMinimal: Food) {
-    this.foods.push(this.createRecipeFood(foodMinimal))
+  addRecipeFood(food: Food) {
+    const test = this.createRecipeFood(food);
+    this.recipeFoods.push(test)
   }
+
 
   getTitle() {
     return this.data?.id ? 'éditer la recette' : 'Nouvelle recette';
@@ -105,8 +136,12 @@ export class RecipeDialogComponent {
       return
     }
 
-    const recipeFoods: RecipeFood[] = this.foods.value.map(e => {
-      return this.getDefaultRecipeFood(e);
+    const recipeFoods: RecipeFood[] = this.recipeFoods.value.map(e => {
+      return {
+        food: e.food,
+        quantity: e.quantity,
+        conversionFactor: e.conversionFactor
+      }
     })
     const recipe: Recipe = {
       name: this.recipeForm.get('name')?.value,
@@ -139,33 +174,18 @@ export class RecipeDialogComponent {
   }
 
   private initializeRecipeFoodFormArray() {
-    const formArray = this.formBuilder.array([])
+    const formArray = this.formBuilder.array<FormGroup>([])
     this.data?.recipeFoods?.forEach(value => {
       formArray.push(this.createRecipeFood(value.food))
     })
     return formArray;
   }
 
-  private createRecipeFood(foodMinimal: Food): FormControl {
-    return new FormControl<Food>(foodMinimal, [])
-  }
-
-  private getDefaultRecipeFood(e: Food) {
-    return {
-      id: e.id,
-      food: e,
-      meal: {
-        id: this.data?.id
-      },
-      quantity: 1,
-      conversionFactor: {
-        id: 1,
-        factor: 0.5,
-        measure: {
-          id: 1,
-          name: 'portion-test'
-        },
-      }
-    }
+  private createRecipeFood(food: Food): FormGroup {
+    return this.formBuilder.group({
+      food: new FormControl<Food>(food),
+      conversionFactor: new FormControl<ConversionFactor>(food.conversionFactors[0]),
+      quantity: new FormControl<number>(1)
+    });
   }
 }

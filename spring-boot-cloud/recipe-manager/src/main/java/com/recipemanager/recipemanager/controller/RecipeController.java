@@ -1,6 +1,7 @@
 package com.recipemanager.recipemanager.controller;
 
 
+import com.recipemanager.recipemanager.dto.RecipeDto;
 import com.recipemanager.recipemanager.dto.RecipeNutritionalValues;
 import com.recipemanager.recipemanager.entity.Recipe;
 import com.recipemanager.recipemanager.entity.RecipeFood;
@@ -20,7 +21,7 @@ public class RecipeController {
 
 
     @GetMapping
-    public ResponseEntity<List<Recipe>> findByCreatedByUserId() {
+    public ResponseEntity<List<RecipeDto>> findByCreatedByUserId() {
         return new ResponseEntity<>(
                 recipeService.findByCreatedByUserId(),
                 HttpStatus.OK
@@ -37,7 +38,7 @@ public class RecipeController {
     }
 
     @PostMapping
-    public ResponseEntity<Recipe> createRecipe(@RequestBody Recipe recipe) {
+    public ResponseEntity<Recipe> createRecipe(@RequestBody RecipeDto recipe) {
         return new ResponseEntity<>(
                 recipeService.createRecipe(recipe),
                 HttpStatus.CREATED

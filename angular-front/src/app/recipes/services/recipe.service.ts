@@ -11,7 +11,7 @@ import {NutritionService} from "./nutrition.service";
   providedIn: 'root'
 })
 export class RecipeService {
-  private BASE_URL = 'http://localhost:3000'
+  private BASE_URL = '/api/recipe-manager'
   private RECIPE_URL = '/recipes'
 
 

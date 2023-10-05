@@ -6,7 +6,7 @@ import {RecipeFood} from "../../models/RecipeFood";
 import {ConversionFactor} from "../../models/ConversionFactor";
 import {BehaviorSubject} from "rxjs";
 import {ConversionFactorService} from "../../services/conversion-factor.service";
-import {Food} from "../../models/Food";
+import {Food, FoodMinimal} from "../../models/Food";
 
 export interface RecipeFoodDialogData {
   recipeFood: RecipeFood | undefined,
@@ -46,7 +46,7 @@ export interface RecipeFoodDialogData {
           <mat-label>Portion</mat-label>
           <mat-select formControlName="conversionFactor">
             <mat-option *ngFor="let convFactor of conversionFactorsSubject | async" [value]="convFactor">
-              {{convFactor.measure.name}}
+              {{convFactor.measure.nameFrench}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -83,14 +83,14 @@ export class RecipeFoodDialogComponent {
     if (this.data && this.data.recipeFood?.id) {
       const recipeFood = {...this.recipeFoodForm.value}
       recipeFood.meal = this.data.recipeFood.meal
-      this.recipeService.updateRecipeFood(this.data.recipeId, this.data.recipeFood!.id!, recipeFood)
+      this.recipeService.updateRecipeFood(this.data.recipeFood!.id!, recipeFood)
     } else {
       this.recipeService.addRecipeFood(this.data.recipeId, {...this.recipeFoodForm.value})
     }
     this.dialogRef.close()
   }
 
-  setRecipeFood(foodMinimal: Food) {
+  setRecipeFood(foodMinimal: FoodMinimal) {
     this.recipeFoodForm.get('food')?.setValue(foodMinimal)
     this.setAlreadyFoods()
   }
@@ -125,7 +125,7 @@ export class RecipeFoodDialogComponent {
         this.conversionFactorsSubject.next(value);
         if (this.data.recipeFood?.conversionFactor) {
           this.recipeFoodForm.get('conversionFactor')?.setValue(
-            value.find(e => e.id === this.data.recipeFood?.conversionFactor.id)
+            value.find(e => e.id === this.data?.recipeFood?.conversionFactor?.id)
           )
         }
       })

@@ -86,7 +86,7 @@ public class UserService {
         return token.getPayload();
     }
 
-    public Boolean signUp(SignUpRequest signUpRequest) throws UserAlreadyExistException {
+    public User signUp(SignUpRequest signUpRequest) throws UserAlreadyExistException {
 
         String email = signUpRequest.email();
         String password = signUpRequest.password();
@@ -101,7 +101,7 @@ public class UserService {
 
         userRepository.save(newUser);
 
-        return true;
+        return newUser;
     }
 
     private void setDefaultRole(User newUser) {

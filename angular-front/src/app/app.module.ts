@@ -19,6 +19,8 @@ import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {AuthInterceptor} from "./interceptors/AuthInterceptor";
+import {AuthModule} from "./auth/auth.module";
+import {CorsInterceptor} from "./interceptors/CorsInterceptor";
 
 
 @NgModule({
@@ -28,6 +30,7 @@ import {AuthInterceptor} from "./interceptors/AuthInterceptor";
     BrowserAnimationsModule,
     AppRoutingModule,
     PublicModule,
+    AuthModule,
     RecipesModule,
     MatToolbarModule,
     MatButtonModule,
@@ -48,6 +51,16 @@ import {AuthInterceptor} from "./interceptors/AuthInterceptor";
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    /*{
+      provide: HTTP_INTERCEPTORS,
+      useClass: BaseUrlInterceptor,
+      multi: true
+    },*/
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CorsInterceptor,
       multi: true
     }
   ],

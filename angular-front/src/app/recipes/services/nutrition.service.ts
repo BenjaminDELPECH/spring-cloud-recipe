@@ -69,7 +69,10 @@ export class NutritionService {
         const previousValue = nutritionalValuesByNutrientId.has(nutrientId) ? nutritionalValuesByNutrientId.get(nutrientId)! : 0;
         const recipeFood = recipeFoodByFoodIdMap.get(foodId)!
         const {conversionFactor, quantity} = recipeFood
-        const valConverted = value * conversionFactor.factor * quantity
+        if(!conversionFactor){
+          return
+        }
+        const valConverted = value * conversionFactor?.factor ? conversionFactor.factor : 0 * quantity
         nutritionalValuesByNutrientId.set(nutrientId, previousValue + valConverted)
       })
     return nutritionalValuesByNutrientId;

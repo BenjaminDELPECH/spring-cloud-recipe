@@ -12,7 +12,7 @@ interface RecipeFoodRow {
   id: number,
   foodName: string,
   foodId: number,
-  measure: string,
+  measure?: string,
   quantity: number
 }
 
@@ -142,7 +142,7 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
 
   deleteRecipeFood(recipeFoodId: number) {
     const recipeFood: RecipeFood | undefined = this.recipe?.recipeFoods.find(e => e.id === recipeFoodId)
-    this.recipeService.deleteRecipeFood(this.recipeId!.toString(), recipeFood!);
+    this.recipeService.deleteRecipeFood(recipeFood!);
   }
 
   private mapToRows(value: Recipe): RecipeFoodRow[] {
@@ -151,7 +151,7 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
         id: e.id!!,
         foodId: e.food.id!!,
         foodName: e.food.name,
-        measure: e.conversionFactor.measure.name,
+        measure: e.conversionFactor?.measure.name,
         quantity: e.quantity
       }
     });

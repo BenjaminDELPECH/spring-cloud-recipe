@@ -1,24 +1,23 @@
 import {Injectable} from '@angular/core';
 import {Observable} from "rxjs";
-import {Food} from "../models/Food";
+import {Food, FoodMinimal} from "../models/Food";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FoodService {
-  private BASE_URL = 'http://localhost:3000'
-  private FOOD_MINIMAL_URL = '/foods-minimal'
+  private BASE_URL = '/api/food-nutrients'
 
   constructor(private httpClient: HttpClient) {
   }
 
 
-  getFoods(): Observable<Food[]> {
-    return this.httpClient.get<Food[]>(this.getFoodMinimalUrl())
+  searchFoods(str: string): Observable<FoodMinimal[]> {
+    return this.httpClient.get<FoodMinimal[]>(this.BASE_URL + `/foods?search=${str}`)
   }
 
-  getFoodMinimalUrl() {
-    return this.BASE_URL + this.FOOD_MINIMAL_URL;
+  getCompleteFood(food: FoodMinimal) {
+    return this.httpClient.get<Food>(this.BASE_URL + `/foods/${food.id}`)
   }
 }

@@ -7,7 +7,7 @@ import {Nutrient} from "../models/Nutrient";
   providedIn: 'root'
 })
 export class NutrientService {
-  private BASE_URL = 'http://localhost:3000'
+  private readonly BASE_URL = '/api/food-nutrients';
   private nutrients: Nutrient[] = []
 
   constructor(private httpClient: HttpClient) {

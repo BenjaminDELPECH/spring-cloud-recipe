@@ -8,6 +8,6 @@ export interface RecipeFood {
   id?: number,
   meal?: MealMinimal,
   food: Food,
-  conversionFactor: ConversionFactor,
+  conversionFactor?: ConversionFactor,
   quantity: number
 }

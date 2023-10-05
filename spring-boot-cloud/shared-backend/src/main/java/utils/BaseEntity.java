@@ -18,12 +18,15 @@ import java.time.Instant;
 public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
+
+    @JsonIgnore
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private Instant createdAt;
 
+    @JsonIgnore
     @Column(name = "updated_at")
     @UpdateTimestamp
     private Instant updatedAt;
@@ -37,6 +40,7 @@ public abstract class BaseEntity {
     @LastModifiedBy
     @JoinColumn(name = "updated_by")
     private Long updated_by;
+
 
     public Long getId() {
         return id;
@@ -56,5 +60,9 @@ public abstract class BaseEntity {
 
     public Long getUpdated_by() {
         return updated_by;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -18,6 +18,17 @@ import java.util.Set;
 public class Recipe extends BaseEntity {
     String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
     private Set<RecipeFood> recipeFoods = new HashSet<>();
+
+    public void addRecipeFood(Long foodId, Long conversionFactorId, Float quantity){
+        this.recipeFoods.add(
+                new RecipeFood(
+                        foodId,
+                        conversionFactorId,
+                        quantity,
+                        this
+                )
+        );
+    }
 }

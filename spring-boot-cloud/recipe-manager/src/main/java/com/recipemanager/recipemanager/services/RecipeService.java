@@ -1,7 +1,6 @@
 package com.recipemanager.recipemanager.services;
 
-import com.recipemanager.recipemanager.dto.NutritionalValue;
-import com.recipemanager.recipemanager.dto.RecipeNutritionalValues;
+import com.recipemanager.recipemanager.dto.*;
 import com.recipemanager.recipemanager.entity.Recipe;
 import com.recipemanager.recipemanager.entity.RecipeFood;
 import com.recipemanager.recipemanager.feign.StoreFoodNutrient;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import utils.UserUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -22,11 +22,39 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final RecipeFoodRepository recipeFoodRepository;
 
-    public List<Recipe> findByCreatedByUserId() {
-        return recipeRepository.findByCreatedByUserId(UserUtils.getUserId());
+    public RecipeDto getCompleteRecipe(Recipe recipe) {
+        return new RecipeDto(recipe.getId()
+                , recipe.getName()
+                , recipe.getRecipeFoods().stream()
+                .map(recipeFood -> {
+                    FoodMinimal foodMinimal = storeFoodNutrient.getFoodMinimal(recipeFood.getFoodId());
+                    ConversionFactorMinimal conversionFactorMinimal = storeFoodNutrient.getConversionFactorMinimal(recipeFood.getConversionFactorId());
+
+                    return new RecipeFoodDto(
+                            recipeFood.getId(),
+                            foodMinimal,
+                            conversionFactorMinimal,
+                            recipeFood.getQuantity()
+                    );
+                }).collect(Collectors.toSet()));
     }
 
-    public Recipe createRecipe(Recipe recipe) {
+    public List<RecipeDto> findByCreatedByUserId() {
+        return recipeRepository.findByCreatedBy(UserUtils.getUserId()).stream()
+                .map(this::getCompleteRecipe)
+                .toList();
+    }
+
+    public Recipe createRecipe(RecipeDto recipeDto) {
+        Recipe recipe = new Recipe();
+        recipe.setName(recipeDto.name());
+        recipeDto.recipeFoods().forEach(recipeFoodDto -> {
+            recipe.addRecipeFood(
+                    recipeFoodDto.food().id(),
+                    recipeFoodDto.conversionFactor().id(),
+                    recipeFoodDto.quantity()
+            );
+        });
         return recipeRepository.save(recipe);
     }
 
@@ -65,7 +93,9 @@ public class RecipeService {
     }
 
     private Recipe getRecipe(Long id) {
-        return recipeRepository.findById(id).orElseThrow(NotFoundException::new);
+        Recipe recipe = recipeRepository.findById(id).orElseThrow(NotFoundException::new);
+        RecipeDto recipeDto = getCompleteRecipe(recipe);
+        return recipe;
     }
 
     private RecipeFood getRecipeFood(Long id) {
