@@ -1,8 +1,20 @@
-.menu-spacer {
-  flex: 1 1 auto;
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
-.row {
-  width: 100%;
-  display: flex;
+mat-sidenav-container {
+  height: 100vh; /* Prend toute la hauteur de la fenêtre */
+}
+
+mat-sidenav-content {
+  padding-top: 64px; /* Hauteur standard d'une mat-toolbar */
+}
+
+/* Appliquer le défilement uniquement au contenu du router-outlet */
+mat-sidenav-content > div {
+  height: calc(100vh - 64px); /* 100vh est la hauteur de la fenêtre, 64px est la hauteur du header */
+  overflow-y: auto; /* permet le défilement vertical */
 }

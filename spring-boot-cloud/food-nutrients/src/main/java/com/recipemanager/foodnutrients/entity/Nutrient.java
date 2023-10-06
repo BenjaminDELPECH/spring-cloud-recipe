@@ -16,6 +16,7 @@ public class Nutrient {
     private Long Id;
     private String name;
     private String nameFr;
-    private String code;
+    private String symbol;
     private String unit;
+    private Float requirement;
 }

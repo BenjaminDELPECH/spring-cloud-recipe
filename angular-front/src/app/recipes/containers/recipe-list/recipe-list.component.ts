@@ -4,6 +4,7 @@ import {Subject, Subscription} from "rxjs";
 import {Recipe} from "../../models/Recipe";
 import {MatDialog} from "@angular/material/dialog";
 import {RecipeDialogComponent} from "../../dialogs/recipe-dialog/recipe-dialog.component";
+import {Router} from "@angular/router";
 
 interface RecipeRow {
   id: number,
@@ -34,8 +35,10 @@ interface RecipeRow {
                 <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
               </button>
             </th>
-
             <td mat-cell *matCellDef="let row; let i=index;">
+              <button mat-icon-button color="primary" (click)="goToRecipe(row.id)">
+                <mat-icon aria-label="Edit">edit</mat-icon>
+              </button>
               <button mat-icon-button color="primary" (click)="deleteRecipe(row.id)">
                 <mat-icon aria-label="Delete">delete</mat-icon>
               </button>
@@ -60,7 +63,9 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   subscriptionRecipe: Subscription;
 
   constructor(private recipeService: RecipeService,
-              private dialogService: MatDialog) {
+              private dialogService: MatDialog,
+              private router: Router
+  ) {
     this.subscriptionRecipe = this.recipeService.recipes.subscribe(value => {
       this.recipeList = value
       this.recipeListRows.next(
@@ -97,5 +102,9 @@ export class RecipeListComponent implements OnInit, OnDestroy {
         recipeFoods: e.recipeFoods.map(e => e.food.name).join(' ,')
       }
     });
+  }
+
+  goToRecipe(id: number) {
+    this.router.navigate(['recipes', id])
   }
 }

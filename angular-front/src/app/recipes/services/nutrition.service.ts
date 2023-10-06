@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, ObservedValueOf} from "rxjs";
-import {FoodNutrient, NutritionalValue} from "../models/NutritionalValues";
+import {NutritionalValue, RecipeNutritionalValues} from "../models/NutritionalValues";
 import {Nutrient} from "../models/Nutrient";
 import {RecipeFood} from "../models/RecipeFood";
 
@@ -14,41 +14,26 @@ export class NutritionService {
 
   public getNutritionalValues(
     value: {
-      foodNutrients$: ObservedValueOf<Observable<FoodNutrient[]>>;
+      recipeNutritionalValue$: ObservedValueOf<Observable<RecipeNutritionalValues>>;
       nutrients$: ObservedValueOf<Observable<Nutrient[]>>
     },
     foodIdList: number[],
     recipeFoodByFoodIdMap: Map<number, RecipeFood>) {
-    const {nutrients$: nutrients, foodNutrients$: foodNutrients} = value
-    return this.buildNutritionalValues(nutrients, foodNutrients, foodIdList, recipeFoodByFoodIdMap);
+    const {nutrients$: nutrients, recipeNutritionalValue$: recipeNutritionalValues} = value
+    return this.buildNutritionalValues(nutrients, recipeNutritionalValues, foodIdList, recipeFoodByFoodIdMap);
   }
 
   private buildNutritionalValues(nutrients: Nutrient[],
-                                 foodNutrients: FoodNutrient[],
+                                 recipeNutritionalValues: RecipeNutritionalValues,
                                  foodIdList: number[],
                                  recipeFoodByFoodIdMap: Map<number, RecipeFood>) {
     const nutrientMapById = this.getNutrientsMap(nutrients);
-    const nutritionalValuesByNutrientId = this.getNutrientValuesMap(
-      foodNutrients,
+    return this.getNutrientValuesMap(
+      recipeNutritionalValues,
       foodIdList,
-      recipeFoodByFoodIdMap
+      recipeFoodByFoodIdMap,
+      nutrientMapById
     );
-    return this.getNutrientValues(nutritionalValuesByNutrientId, nutrientMapById);
-  }
-
-  private getNutrientValues(nutritionalValuesByNutrientId: Map<number, number>,
-                            nutrientMapById: Map<number, Nutrient>) {
-    const nutritionalValues: NutritionalValue[] = []
-    nutritionalValuesByNutrientId.forEach((value, nutrientId) => {
-      if (!nutrientMapById.get(nutrientId)) {
-        console.error("nutrientId has not been found : " + nutrientId)
-      }
-      nutritionalValues.push({
-        nutrient: nutrientMapById.get(nutrientId)!,
-        value: value
-      })
-    })
-    return nutritionalValues;
   }
 
   private getNutrientsMap(nutrients: Nutrient[]) {
@@ -59,22 +44,35 @@ export class NutritionService {
     return nutrientMapById;
   }
 
-  private getNutrientValuesMap(foodNutrients: FoodNutrient[],
+  private getNutrientValuesMap(recipeNutritionalValues: RecipeNutritionalValues,
                                foodIdList: number[],
-                               recipeFoodByFoodIdMap: Map<number, RecipeFood>) {
+                               recipeFoodByFoodIdMap: Map<number, RecipeFood>,
+                               nutrientMapById: Map<number, Nutrient>): NutritionalValue[] {
     const nutritionalValuesByNutrientId: Map<number, number> = new Map();
-    foodNutrients.filter(e => foodIdList.find(foodId => foodId === e.foodId))
+    recipeNutritionalValues.foodNutrientValues.filter(e => foodIdList.find(foodId => foodId === e.foodId))
       .map(e => {
-        const {nutrientId, foodId, value} = e
+        const {nutrient, foodId, value} = e
+        const nutrientId = nutrient.id!;
         const previousValue = nutritionalValuesByNutrientId.has(nutrientId) ? nutritionalValuesByNutrientId.get(nutrientId)! : 0;
         const recipeFood = recipeFoodByFoodIdMap.get(foodId)!
         const {conversionFactor, quantity} = recipeFood
-        if(!conversionFactor){
+        if (!conversionFactor) {
           return
         }
         const valConverted = value * conversionFactor?.factor ? conversionFactor.factor : 0 * quantity
         nutritionalValuesByNutrientId.set(nutrientId, previousValue + valConverted)
       })
-    return nutritionalValuesByNutrientId;
+    const nutritionalValues: NutritionalValue[] = [];
+    nutritionalValuesByNutrientId.forEach((nutrientValue: number, nutrientId: number) => {
+      const nutrient: Nutrient = nutrientMapById.get(nutrientId)!;
+      let percentage = (nutrientValue / nutrient.requirement) * 100;
+      percentage = Math.min(percentage, 100);
+      nutritionalValues.push({
+        nutrient: nutrient,
+        value: nutrientValue,
+        percentage: percentage
+      })
+    })
+    return nutritionalValues;
   }
 }

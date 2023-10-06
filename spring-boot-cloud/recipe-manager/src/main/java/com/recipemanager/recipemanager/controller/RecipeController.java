@@ -2,9 +2,9 @@ package com.recipemanager.recipemanager.controller;
 
 
 import com.recipemanager.recipemanager.dto.RecipeDto;
+import com.recipemanager.recipemanager.dto.RecipeFoodDto;
 import com.recipemanager.recipemanager.dto.RecipeNutritionalValues;
 import com.recipemanager.recipemanager.entity.Recipe;
-import com.recipemanager.recipemanager.entity.RecipeFood;
 import com.recipemanager.recipemanager.services.RecipeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,15 @@ public class RecipeController {
         );
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
+    public ResponseEntity<RecipeDto> getRecipe(@PathVariable Long id) {
+        return new ResponseEntity<>(
+                recipeService.getCompleteRecipe(id),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("{id}/nutrient-values")
     public ResponseEntity<RecipeNutritionalValues> getRecipeNutritionalValues(@PathVariable Long id) {
         // todo use a solution to fetch food nutrients service !
         return new ResponseEntity<>(
@@ -38,7 +46,7 @@ public class RecipeController {
     }
 
     @PostMapping
-    public ResponseEntity<Recipe> createRecipe(@RequestBody RecipeDto recipe) {
+    public ResponseEntity<RecipeDto> createRecipe(@RequestBody RecipeDto recipe) {
         return new ResponseEntity<>(
                 recipeService.createRecipe(recipe),
                 HttpStatus.CREATED
@@ -46,24 +54,25 @@ public class RecipeController {
     }
 
     @PostMapping("/{recipeId}/add-recipe-food")
-    public ResponseEntity<Recipe> addRecipeFood(@PathVariable Long recipeId, @RequestBody RecipeFood recipeFood) {
+    public ResponseEntity<RecipeDto> addRecipeFood(@PathVariable Long recipeId, @RequestBody RecipeFoodDto recipeFood) {
         return new ResponseEntity<>(
                 recipeService.addRecipeFood(recipeId, recipeFood),
                 HttpStatus.OK
         );
     }
 
-    @PutMapping("/update-recipe-food/{recipeFoodId}")
-    public ResponseEntity<Recipe> updateRecipeFood(@PathVariable Long recipeFoodId,
-                                                   @RequestBody RecipeFood recipeFood) {
+    @PostMapping("/{recipeId}/update-recipe-food/{recipeFoodId}")
+    public ResponseEntity<RecipeDto> updateRecipeFood(@PathVariable Long recipeId,
+                                                      @PathVariable Long recipeFoodId,
+                                                      @RequestBody RecipeFoodDto recipeFood) {
         return new ResponseEntity<>(
                 recipeService.updateRecipeFood(recipeFoodId, recipeFood),
                 HttpStatus.OK
         );
     }
 
-    @DeleteMapping("/delete-recipe-food/{recipeFoodId}")
-    public ResponseEntity<Recipe> deleteRecipeFood(@PathVariable Long recipeFoodId) {
+    @PostMapping("/delete-recipe-food/{recipeFoodId}")
+    public ResponseEntity<RecipeDto> deleteRecipeFood(@PathVariable Long recipeFoodId) {
         return new ResponseEntity<>(
                 recipeService.deleteRecipeFood(recipeFoodId),
                 HttpStatus.OK

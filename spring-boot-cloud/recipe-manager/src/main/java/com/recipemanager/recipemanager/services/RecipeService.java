@@ -9,11 +9,13 @@ import com.recipemanager.recipemanager.repository.RecipeRepository;
 import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import utils.UserUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @AllArgsConstructor
 @Service
 public class RecipeService {
@@ -21,6 +23,12 @@ public class RecipeService {
 
     private final RecipeRepository recipeRepository;
     private final RecipeFoodRepository recipeFoodRepository;
+
+    public RecipeDto getCompleteRecipe(Long id) {
+        return getCompleteRecipe(
+                getRecipe(id)
+        );
+    }
 
     public RecipeDto getCompleteRecipe(Recipe recipe) {
         return new RecipeDto(recipe.getId()
@@ -45,7 +53,7 @@ public class RecipeService {
                 .toList();
     }
 
-    public Recipe createRecipe(RecipeDto recipeDto) {
+    public RecipeDto createRecipe(RecipeDto recipeDto) {
         Recipe recipe = new Recipe();
         recipe.setName(recipeDto.name());
         recipeDto.recipeFoods().forEach(recipeFoodDto -> {
@@ -55,7 +63,7 @@ public class RecipeService {
                     recipeFoodDto.quantity()
             );
         });
-        return recipeRepository.save(recipe);
+        return getCompleteRecipe(recipeRepository.save(recipe));
     }
 
     public Recipe updateRecipe(Long id, Recipe recipe) {
@@ -71,30 +79,39 @@ public class RecipeService {
         recipeRepository.delete(recipe);
     }
 
-    public Recipe addRecipeFood(Long id, RecipeFood recipeFood) {
+    public RecipeDto addRecipeFood(Long id, RecipeFoodDto recipeFoodDto) {
         Recipe recipe = getRecipe(id);
-        recipe.getRecipeFoods().add(recipeFood);
-        return recipe;
+        recipe.addRecipeFood(
+                recipeFoodDto.food().id(),
+                recipeFoodDto.conversionFactor().id(),
+                recipeFoodDto.quantity()
+        );
+        return getCompleteRecipe(recipe);
     }
 
-    public Recipe updateRecipeFood(Long recipeFoodId, RecipeFood recipeFood) {
+    public RecipeDto updateRecipeFood(Long recipeFoodId, RecipeFoodDto recipeFoodDto) {
         RecipeFood recipeFoodAlready = getRecipeFood(recipeFoodId);
-        recipeFoodAlready.setFoodId(recipeFood.getFoodId());
-        recipeFoodAlready.setQuantity(recipeFood.getQuantity());
-        recipeFoodAlready.setConversionFactorId(recipeFood.getConversionFactorId());
+        recipeFoodAlready.setFoodId(recipeFoodDto.food().id());
+        recipeFoodAlready.setQuantity(recipeFoodDto.quantity());
+        recipeFoodAlready.setConversionFactorId(recipeFoodDto.conversionFactor().id());
         recipeFoodRepository.save(recipeFoodAlready);
-        return recipeFoodAlready.getRecipe();
+        return getCompleteRecipe(recipeFoodAlready.getRecipe());
     }
 
-    public Recipe deleteRecipeFood(Long recipeFoodId) {
+    public RecipeDto deleteRecipeFood(Long recipeFoodId) {
         RecipeFood recipeFood = getRecipeFood(recipeFoodId);
+        Recipe recipe = recipeFood.getRecipe();
+        recipe.setRecipeFoods(
+                recipe.getRecipeFoods().stream()
+                        .filter(e -> !e.getId().equals(recipeFoodId))
+                        .collect(Collectors.toSet())
+        );
         recipeFoodRepository.delete(recipeFood);
-        return recipeFood.getRecipe();
+        return getCompleteRecipe(recipe);
     }
 
     private Recipe getRecipe(Long id) {
         Recipe recipe = recipeRepository.findById(id).orElseThrow(NotFoundException::new);
-        RecipeDto recipeDto = getCompleteRecipe(recipe);
         return recipe;
     }
 

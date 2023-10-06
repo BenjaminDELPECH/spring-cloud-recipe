@@ -13,6 +13,7 @@ public class FoodNutrientService {
     private final FoodNutrientRepository foodNutrientRepository;
 
     public List<NutritionalValue> getNutritionalValues(List<Long> foodIds) {
-        return foodNutrientRepository.findFoodNutrientByFoodIds(foodIds);
+        List<NutritionalValue> nutritionalValues = foodNutrientRepository.findFoodNutrientByFoodIds(foodIds);
+        return nutritionalValues;
     }
 }

@@ -7,9 +7,7 @@ import {ConversionFactor} from "../models/ConversionFactor";
   providedIn: 'root'
 })
 export class ConversionFactorService {
-  BASE_URL = 'http://localhost:3000'
-  private CONVERSION_FACTORS_URL = '/conversionFactors'
-
+  private BASE_URL = '/api/food-nutrients/conversion-factors'
   constructor(private httpClient: HttpClient) {
   }
 
@@ -18,6 +16,6 @@ export class ConversionFactorService {
   }
 
   getConversionFactorUrl() {
-    return this.BASE_URL + this.CONVERSION_FACTORS_URL
+    return this.BASE_URL
   }
 }

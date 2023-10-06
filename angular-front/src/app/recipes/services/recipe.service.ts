@@ -3,7 +3,7 @@ import {BehaviorSubject, forkJoin, Observable} from "rxjs";
 import {Recipe} from "../models/Recipe";
 import {HttpClient} from "@angular/common/http";
 import {RecipeFood} from "../models/RecipeFood";
-import {FoodNutrient, RecipeNutritionalValues} from '../models/NutritionalValues';
+import {NutritionalValue, RecipeNutritionalValues} from '../models/NutritionalValues';
 import {NutrientService} from "./nutrient.service";
 import {NutritionService} from "./nutrition.service";
 
@@ -21,8 +21,8 @@ export class RecipeService {
   private _recipe: BehaviorSubject<Recipe | null> = new BehaviorSubject<Recipe | null>(null);
   public readonly recipe: Observable<Recipe | null> = this._recipe.asObservable();
 
-  private _recipeNutritionalValues: BehaviorSubject<RecipeNutritionalValues | null> = new BehaviorSubject<RecipeNutritionalValues | null>(null);
-  public readonly recipeNutritionalValues: Observable<RecipeNutritionalValues | null> = this._recipeNutritionalValues.asObservable();
+  private _recipeNutritionalValues: BehaviorSubject<NutritionalValue[] | null> = new BehaviorSubject<NutritionalValue[] | null>(null);
+  public readonly recipeNutritionalValues: Observable<NutritionalValue[] | null> = this._recipeNutritionalValues.asObservable();
 
   constructor(private httpClient: HttpClient,
               private nutrient: NutrientService,
@@ -38,7 +38,7 @@ export class RecipeService {
   }
 
   loadRecipe(id: string) {
-    this.httpClient.get<Recipe>(this.getBaseUrl() + "/" + id).subscribe(response => {
+    return this.httpClient.get<Recipe>(this.getBaseUrl() + "/" + id).subscribe(response => {
       console.log(response);
       this._recipe.next(response);
       this.loadRecipeNutritionalValues(response)
@@ -57,14 +57,14 @@ export class RecipeService {
     })
     const foodIdList: number[] = recipeFoods.map(e => e.food.id!)
     const nutrients$ = this.nutrient.getNutrients()
-    const foodNutrients$ = this.httpClient.get<FoodNutrient[]>(this.BASE_URL + `/food-nutrients/${recipe.id}`)
-    forkJoin(({nutrients$, foodNutrients$}))
+    const recipeNutritionalValue$ = this.httpClient.get<RecipeNutritionalValues>(this.BASE_URL + `/recipes/${recipe.id}/nutrient-values`)
+    forkJoin(({nutrients$, recipeNutritionalValue$}))
       .subscribe(value => {
-        const nutritionalValues = this.nutritionService.getNutritionalValues(value, foodIdList, recipeFoodByFoodIdMap);
-        this._recipeNutritionalValues.next({
-          recipeId: recipe.id!,
-          nutrientValues: nutritionalValues
-        })
+        const nutritionalValues = this.nutritionService.getNutritionalValues(
+          value,
+          foodIdList,
+          recipeFoodByFoodIdMap);
+        this._recipeNutritionalValues.next(nutritionalValues)
       })
   }
 
@@ -78,6 +78,7 @@ export class RecipeService {
         console.log(response);
         const recipes = this._recipes.value
         recipes.push(response)
+        debugger
         this._recipes.next(recipes)
         this.loadRecipeNutritionalValues(response)
       })
@@ -97,17 +98,20 @@ export class RecipeService {
   }
 
   addRecipeFood(recipeId: number, recipeFood: RecipeFood) {
-    return this.httpClient.put<Recipe>(this.getBaseUrl() + "/" + recipeId + "/add-recipe-food", recipeFood)
+    return this.httpClient.post<Recipe>(this.getBaseUrl() + "/" + recipeId + "/add-recipe-food", recipeFood)
       .subscribe(response => {
         this._recipe.next(response);
         this.loadRecipeNutritionalValues(response);
       })
   }
 
-  updateRecipeFood(recipeFoodId: number, recipeFood: RecipeFood) {
+  updateRecipeFood(
+    recipeId: number,
+    recipeFoodId: number,
+    recipeFood: RecipeFood) {
     recipeFood.id = recipeFoodId
-    return this.httpClient.put<Recipe>(
-      this.getBaseUrl() + "/update-recipe-food/" + recipeFoodId,
+    return this.httpClient.post<Recipe>(
+      this.BASE_URL + `/recipes/${recipeId}/update-recipe-food/${recipeFood.id}`,
       recipeFood)
       .subscribe(response => {
         this._recipe.next(response)
@@ -116,7 +120,7 @@ export class RecipeService {
   }
 
   deleteRecipeFood(recipeFood: RecipeFood) {
-    this.httpClient.delete<Recipe>(this.getBaseUrl() + "/" + recipeFood.id)
+    this.httpClient.post<Recipe>(this.getBaseUrl() + "/delete-recipe-food/" + recipeFood.id, {})
       .subscribe(response => {
         this._recipe.next(response)
         this.loadRecipeNutritionalValues(response)

@@ -14,6 +14,7 @@ import {FoodService} from "../../services/food.service";
              placeholder="Chercher.."
              matInput
              id="foodSearch"
+             id="foodSearch"
              #foodSearch
              [matAutocomplete]="auto">
     </mat-form-field>
@@ -29,6 +30,9 @@ export class SearchAddFoodComponent implements AfterViewInit {
   @Input()
   showLastSelected: boolean = false;
 
+  @Input()
+  value?: Food;
+
   foods: FoodMinimal[] = []
   filteredFoods: BehaviorSubject<FoodMinimal[]> = new BehaviorSubject<FoodMinimal[]>([]);
 
@@ -42,9 +46,14 @@ export class SearchAddFoodComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const foodSearch = document.getElementById("foodSearch")
+
+    const foodSearch: HTMLInputElement = document.getElementById("foodSearch") as HTMLInputElement
+
     if (!foodSearch) {
       console.error("no food search")
+    }
+    if (this.value) {
+      foodSearch!.value = this.value.name
     }
     const foodSearch$ = fromEvent<any>(foodSearch!, 'input')
     foodSearch$.pipe(

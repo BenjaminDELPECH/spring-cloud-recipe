@@ -7,6 +7,7 @@ import {RecipeFood} from "../../models/RecipeFood";
 import {RecipeFoodDialogComponent} from "../../dialogs/recipe-food-dialog/recipe-food-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {NutritionalValue} from "../../models/NutritionalValues";
+import {ActivatedRoute} from "@angular/router";
 
 interface RecipeFoodRow {
   id: number,
@@ -20,20 +21,18 @@ interface RecipeFoodRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-recipe-details',
   template: `
-    <mat-grid-list cols="2">
-      <mat-grid-tile>
-        <mat-card class="md-margin">
-          <mat-card-title style="">
-            <div fxLayout>
-              <button mat-icon-button (click)="goBack()" fxShow="true">
+    <div fxLayout="column" fxLayoutGap="20px">
+      <div fxLayout="row" fxLayoutGap="20px">
+        <mat-card fxFlex="50">
+          <mat-card-header>
+            <mat-card-title>
+              <button mat-icon-button (click)="goBack()">
                 <mat-icon>arrow_back</mat-icon>
               </button>
-              <div class="" fxFlexAlign="center">{{(recipeSubject | async)?.name}}</div>
-            </div>
-          </mat-card-title>
-          <mat-card-content fxFlex fxLayout="column">
-
-            <mat-divider></mat-divider>
+              {{(recipeSubject | async)?.name}}
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
             <table mat-table [dataSource]="foodRows" class="mat-elevation-z0">
               <ng-container matColumnDef="quantity">
                 <th mat-header-cell *matHeaderCellDef> Quantité</th>
@@ -68,15 +67,17 @@ interface RecipeFoodRow {
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
             </table>
+
           </mat-card-content>
         </mat-card>
-      </mat-grid-tile>
-      <mat-grid-tile>
-        <mat-card class="md-margin">
-          <app-nutritional-values [nutritionalValues]="nutritionalValues | async"/>
+
+        <mat-card fxFlex="50">
+          <mat-card-content>
+            <app-nutritional-values [nutritionalValues]="nutritionalValues | async"></app-nutritional-values>
+          </mat-card-content>
         </mat-card>
-      </mat-grid-tile>
-    </mat-grid-list>
+      </div>
+    </div>
   `,
   styleUrls: ['./recipe-details.component.css']
 })
@@ -92,10 +93,13 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['quantity', 'measure', 'foodName', 'actions']
   subscriptionRecipe: Subscription;
   subscriptionNutritionalValues: Subscription;
+  private queryParamSubscription: Subscription;
 
-  constructor(protected recipeService: RecipeService,
-              private dialogService: MatDialog,
-              private location: Location) {
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    protected recipeService: RecipeService,
+    private dialogService: MatDialog,
+    private location: Location) {
     this.subscriptionRecipe = this.recipeService.recipe.subscribe(value => {
       if (!value) return
       this.foodRows.next(
@@ -109,21 +113,23 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
         return;
       }
       console.log(value)
-      this.nutritionalValues.next(value.nutrientValues)
+      this.nutritionalValues.next(value)
+    })
+    this.queryParamSubscription = this.activatedRoute.params.pipe(
+    ).subscribe(params => {
+      const id = params['id'];
+      this.recipeService.loadRecipe(id);
     })
   }
 
-  ngOnDestroy(): void {
-    this.subscriptionRecipe.unsubscribe();
-    this.subscriptionNutritionalValues.unsubscribe();
+  ngOnInit(): void {
+
   }
 
-  ngOnInit(): void {
-    if (!this.recipeId) {
-      return;
-    }
-    this.recipeService.loadRecipe(this.recipeId)
+  ngOnDestroy(): void {
+    this.queryParamSubscription.unsubscribe();
   }
+
 
   goBack() {
     this.location.back()

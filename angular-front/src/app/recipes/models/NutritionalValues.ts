@@ -7,12 +7,20 @@ export interface FoodNutrient {
   value: number
 }
 
-export interface NutritionalValue {
+export interface FoodNutrientValue {
+  foodId: number,
   nutrient: Nutrient,
   value: number
 }
 
+
+export interface NutritionalValue {
+  nutrient: Nutrient,
+  value: number,
+  percentage: number
+}
+
 export interface RecipeNutritionalValues {
-  nutrientValues: NutritionalValue[],
+  foodNutrientValues: FoodNutrientValue[],
   recipeId: number,
 }

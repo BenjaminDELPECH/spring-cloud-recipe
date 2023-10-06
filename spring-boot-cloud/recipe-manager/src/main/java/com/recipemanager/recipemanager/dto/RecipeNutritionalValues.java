@@ -3,7 +3,7 @@ package com.recipemanager.recipemanager.dto;
 import java.util.List;
 
 public record RecipeNutritionalValues(
-        List<NutritionalValue> nutrientValues,
+        List<NutritionalValue> foodNutrientValues,
         Long recipeId
 ) {
 

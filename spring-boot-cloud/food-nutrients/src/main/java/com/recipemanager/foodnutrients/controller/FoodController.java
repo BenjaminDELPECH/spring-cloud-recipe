@@ -1,6 +1,7 @@
 package com.recipemanager.foodnutrients.controller;
 
 import com.recipemanager.foodnutrients.dto.FoodMinimal;
+import com.recipemanager.foodnutrients.entity.Food;
 import com.recipemanager.foodnutrients.service.FoodService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,8 @@ public class FoodController {
     }
 
     @GetMapping("{id}")
-    public FoodMinimal getFood(@PathVariable Long id) {
-        return foodService.getFoodMinimal(id);
+    public Food getFood(@PathVariable Long id) {
+        return foodService.getFood(id);
     }
+
 }

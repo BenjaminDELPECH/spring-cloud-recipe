@@ -15,8 +15,8 @@ CREATE TABLE recipe_food
     updated_at           TIMESTAMP WITHOUT TIME ZONE,
     created_by           BIGINT,
     updated_by           BIGINT,
-    food_id              BIGINT,
-    conversion_factor_id BIGINT,
+    food_id              BIGINT NOT NULL,
+    conversion_factor_id BIGINT NOT NULL,
     quantity             FLOAT,
     recipe_id            BIGINT                                  NOT NULL,
     CONSTRAINT pk_recipe_food PRIMARY KEY (id)
@@ -24,19 +24,3 @@ CREATE TABLE recipe_food
 
 ALTER TABLE recipe_food
     ADD CONSTRAINT FK_RECIPE_FOOD_ON_RECIPE FOREIGN KEY (recipe_id) REFERENCES recipe (id) ON DELETE SET NULL;
-
-CREATE TABLE recipe_recipe_foods
-(
-    recipe_id       BIGINT NOT NULL,
-    recipe_foods_id BIGINT NOT NULL,
-    CONSTRAINT pk_recipe_recipefoods PRIMARY KEY (recipe_id, recipe_foods_id)
-);
-
-ALTER TABLE recipe_recipe_foods
-    ADD CONSTRAINT uc_recipe_recipe_foods_recipefoods UNIQUE (recipe_foods_id);
-
-ALTER TABLE recipe_recipe_foods
-    ADD CONSTRAINT fk_recrecfoo_on_recipe FOREIGN KEY (recipe_id) REFERENCES recipe (id);
-
-ALTER TABLE recipe_recipe_foods
-    ADD CONSTRAINT fk_recrecfoo_on_recipe_food FOREIGN KEY (recipe_foods_id) REFERENCES recipe_food (id);
