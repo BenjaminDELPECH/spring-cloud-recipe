@@ -1,11 +1,11 @@
 package com.recipemanager.foodnutrients.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
@@ -19,4 +19,10 @@ public class Nutrient {
     private String symbol;
     private String unit;
     private Float requirement;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "nutrient_group_id")
+    private NutrientGroup nutrientGroup;
+
 }

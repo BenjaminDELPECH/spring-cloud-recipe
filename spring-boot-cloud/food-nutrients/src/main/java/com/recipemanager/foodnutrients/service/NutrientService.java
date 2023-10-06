@@ -14,6 +14,6 @@ public class NutrientService {
 
 
     public List<Nutrient> getNutrients() {
-        return nutrientRepository.findAll();
+        return nutrientRepository.findNutrientsWithNutrientGroupId();
     }
 }

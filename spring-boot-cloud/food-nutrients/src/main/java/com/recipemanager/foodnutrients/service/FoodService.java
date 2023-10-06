@@ -2,7 +2,7 @@ package com.recipemanager.foodnutrients.service;
 
 import com.recipemanager.foodnutrients.dto.FoodMinimal;
 import com.recipemanager.foodnutrients.entity.Food;
-import com.recipemanager.foodnutrients.entity.FoodRepository;
+import com.recipemanager.foodnutrients.repository.FoodRepository;
 import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

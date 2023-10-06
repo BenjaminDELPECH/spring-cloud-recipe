@@ -59,11 +59,15 @@ export class NutritionService {
         if (!conversionFactor) {
           return
         }
-        const valConverted = value * conversionFactor?.factor ? conversionFactor.factor * quantity : 0
+        let convFactor = (conversionFactor?.factor ? conversionFactor.factor * quantity : 1)
+        let valConverted = value * convFactor
         nutritionalValuesByNutrientId.set(nutrientId, previousValue + valConverted)
       })
     const nutritionalValues: NutritionalValue[] = [];
     nutritionalValuesByNutrientId.forEach((nutrientValue: number, nutrientId: number) => {
+      if (nutrientMapById.has(nutrientId) === false) {
+        return
+      }
       const nutrient: Nutrient = nutrientMapById.get(nutrientId)!;
       let percentage = (nutrientValue / nutrient.requirement) * 100;
       percentage = Math.min(percentage, 100);
