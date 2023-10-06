@@ -16,50 +16,49 @@ export interface RecipeFoodDialogData {
 @Component({
   selector: 'app-recipe-food-dialog',
   template: `
-    <h1 mat-dialog-title>{{getTitle()}}</h1>
-    <div mat-dialog-content>
-      Aliment selectionné : {{recipeFoodForm.get('food')?.value?.name}}
-      <form [formGroup]="recipeFoodForm" fxFlexFill fxFlexAlign (ngSubmit)="onSubmit()">
-        <app-search-add-food
-          [value]="data.recipeFood?.food"
-          (addFoodEmitter)="setRecipeFood($event)"
-          [showLastSelected]="true"
-          [alreadyAddedFoods]="alreadyFoods"></app-search-add-food>
-        <ng-container *ngIf="recipeFoodForm.get('food')?.value">
-          <mat-form-field>
-            <mat-label>Quantité</mat-label>
-            <input matInput
-                   placeholder="Quantité"
-                   formControlName="quantity"
-                   required>
-            <mat-error *ngIf="isFieldError('quantity') ">
-              <div *ngIf="recipeFoodForm.get('quantity')?.hasError('minlength')">
-                La quantité doit etre supérieure à 0
-              </div>
-              <div *ngIf="recipeFoodForm.get('quantity')?.hasError('maxlength')">
-                La quantité doit etre inférieur à 100000
-              </div>
-              <div *ngIf="recipeFoodForm.get('quantity')?.hasError('required')">
-                La quantité est obligatoire
-              </div>
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Portion</mat-label>
-            <mat-select formControlName="conversionFactor">
-              <mat-option *ngFor="let convFactor of conversionFactorsSubject | async"
-                          [value]="convFactor">
-                {{convFactor.measure.nameFrench}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </ng-container>
-      </form>
-      <div mat-dialog-actions>
-        <button mat-button (click)="dialogRef.close()">Close</button>
-        <button mat-button (click)="onSubmit()">Valider</button>
+      <h1 mat-dialog-title>{{getTitle()}}</h1>
+      <div mat-dialog-content>
+          Aliment selectionné : {{recipeFoodForm.get('food')?.value?.name}}
+          <form [formGroup]="recipeFoodForm" fxFlexFill fxFlexAlign (ngSubmit)="onSubmit()" >
+              <app-search-add-food
+                      [value]="data.recipeFood?.food"
+                      (addFoodEmitter)="setRecipeFood($event)"
+                      [showLastSelected]="true"
+                      [alreadyAddedFoods]="alreadyFoods"></app-search-add-food>
+              <ng-container *ngIf="recipeFoodForm.get('food')?.value">
+                  <mat-form-field>
+                      <mat-label>Quantité</mat-label>
+                      <input matInput
+                             placeholder="Quantité"
+                             formControlName="quantity"
+                             required>
+                      <mat-error *ngIf="isFieldError('quantity') ">
+                          <div *ngIf="recipeFoodForm.get('quantity')?.hasError('minlength')">
+                              La quantité doit etre supérieure à 0
+                          </div>
+                          <div *ngIf="recipeFoodForm.get('quantity')?.hasError('maxlength')">
+                              La quantité doit etre inférieur à 100000
+                          </div>
+                          <div *ngIf="recipeFoodForm.get('quantity')?.hasError('required')">
+                              La quantité est obligatoire
+                          </div>
+                      </mat-error>
+                  </mat-form-field>
+                  <mat-form-field>
+                      <mat-label>Portion</mat-label>
+                      <mat-select formControlName="conversionFactor" [compareWith]="compareFn">
+                          <mat-option *ngFor="let convFactor of conversionFactorsSubject | async" [value]="convFactor">
+                              {{convFactor.measure.nameFrench}}
+                          </mat-option>
+                      </mat-select>
+                  </mat-form-field>
+              </ng-container>
+          </form>
+          <div mat-dialog-actions>
+              <button mat-button (click)="dialogRef.close()">Close</button>
+              <button mat-button (click)="onSubmit()">Valider</button>
+          </div>
       </div>
-    </div>
   `,
   styleUrls: ['./recipe-food-dialog.component.css']
 })
@@ -87,7 +86,16 @@ export class RecipeFoodDialogComponent {
       take(1)
     ).subscribe(value => {
       this.conversionFactorsSubject.next(value.conversionFactors)
+      const alreadySelected = (this.data.recipeFood?.conversionFactor)
+      if (alreadySelected) {
+        const already = value.conversionFactors.find(e => e.id === alreadySelected.id)
+        this.recipeFoodForm.get('conversionFactor')?.setValue(already);
+      }
     })
+  }
+
+  compareFn(c1: ConversionFactor, c2: ConversionFactor): boolean {
+    return c1 && c2 ? c1.id === c2.id : c1 === c2;
   }
 
   onSubmit() {

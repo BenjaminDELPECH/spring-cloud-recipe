@@ -33,7 +33,7 @@ public class NutrientFoodValueDataLoader implements CommandLineRunner {
     private final ResourceLoader resourceLoader;
     private final NutrientRepository nutrientRepository;
     private final FoodNutrientRepository foodNutrientRepository;
-    private static final String NUTRIENT_CSV_PATH = "classpath:canadianfoodcsvdata/NUTRIENT NAME.csv";
+    private static final String NUTRIENT_CSV_PATH = "classpath:canadianfoodcsvdata/NUTRIENT NAME 2.csv";
     private static final String NUTRIENT_GROUP_CSV_PATH = "classpath:canadianfoodcsvdata/nutrient_groups.csv";
     private static final Logger logger = LoggerFactory.getLogger(NutrientFoodValueDataLoader.class);
     private static final char CSV_SEPARATOR = ',';
@@ -205,7 +205,7 @@ public class NutrientFoodValueDataLoader implements CommandLineRunner {
             long startTime = System.currentTimeMillis();
             CsvToBean<NutrientCsv> nutrientBeans = buildCsvToBean(reader, NutrientCsv.class, CSV_SEPARATOR);
             List<NutrientCsv> nutrientCsvList = nutrientBeans.parse();
-            jdbcTemplate.batchUpdate("insert into nutrient (id, name, name_fr,symbol, unit , requirement, nutrient_group_id) values (?,?,?,?,?, ?, ?)",
+            jdbcTemplate.batchUpdate("insert into nutrient (id, name, name_fr,symbol, unit , requirement, nutrient_group_id, friendly_name_fr) values (?,?,?,?,?, ?, ?, ?)",
                     new BatchPreparedStatementSetter() {
                         @Override
                         public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -221,6 +221,7 @@ public class NutrientFoodValueDataLoader implements CommandLineRunner {
                             } else {
                                 ps.setNull(7, Types.BIGINT);
                             }
+                            ps.setString(8, nutrient.NutrientFriendlyNameFr.isEmpty() == false ? nutrient.NutrientFriendlyNameFr : "");
                         }
 
                         @Override
@@ -341,6 +342,7 @@ public class NutrientFoodValueDataLoader implements CommandLineRunner {
         String NutrientName;
         String NutrientNameF;
         Float NutrientRequirement;
+        String NutrientFriendlyNameFr;
     }
 
     @Getter

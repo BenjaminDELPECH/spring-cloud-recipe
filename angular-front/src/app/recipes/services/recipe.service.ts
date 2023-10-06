@@ -78,7 +78,6 @@ export class RecipeService {
         console.log(response);
         const recipes = this._recipes.value
         recipes.push(response)
-        debugger
         this._recipes.next(recipes)
         this.loadRecipeNutritionalValues(response)
       })

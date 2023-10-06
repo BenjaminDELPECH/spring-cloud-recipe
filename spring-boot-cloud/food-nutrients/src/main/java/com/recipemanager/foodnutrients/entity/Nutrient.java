@@ -17,6 +17,7 @@ public class Nutrient {
     private String name;
     private String nameFr;
     private String symbol;
+    private String friendlyNameFr;
     private String unit;
     private Float requirement;
 

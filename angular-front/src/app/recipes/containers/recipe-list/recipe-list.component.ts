@@ -31,15 +31,18 @@ interface RecipeRow {
           </ng-container>
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>
-              <button mat-icon-button color="primary" label="lol" (click)="openRecipeDialog()">
-                <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
-              </button>
+              <div style="display: flex; align-items: center;">
+                <button mat-flat-button color="primary"  (click)="openRecipeDialog()" style="display: flex; align-items: center;">
+                  <mat-icon style="margin-right: 8px;">add</mat-icon>
+                  <span style="line-height: 24px;">Nouvelle recette</span>
+                </button>
+              </div>
             </th>
             <td mat-cell *matCellDef="let row; let i=index;">
               <button mat-icon-button color="primary" (click)="goToRecipe(row.id)">
                 <mat-icon aria-label="Edit">edit</mat-icon>
               </button>
-              <button mat-icon-button color="primary" (click)="deleteRecipe(row.id)">
+              <button mat-icon-button color="warn" (click)="deleteRecipe(row.id)">
                 <mat-icon aria-label="Delete">delete</mat-icon>
               </button>
             </td>
@@ -99,7 +102,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
       return {
         id: e.id!!,
         name: e.name,
-        recipeFoods: e.recipeFoods.map(e => e.food.name).join(' ,')
+        recipeFoods: e.recipeFoods.map(e => e.food.name).join(', ')
       }
     });
   }

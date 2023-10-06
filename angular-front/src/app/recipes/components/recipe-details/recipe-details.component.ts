@@ -7,7 +7,7 @@ import {RecipeFood} from "../../models/RecipeFood";
 import {RecipeFoodDialogComponent} from "../../dialogs/recipe-food-dialog/recipe-food-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {NutritionalValue} from "../../models/NutritionalValues";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 interface RecipeFoodRow {
   id: number,
@@ -22,60 +22,64 @@ interface RecipeFoodRow {
   selector: 'app-recipe-details',
   template: `
     <div fxLayout="column" fxLayoutGap="20px">
-      <div fxLayout="row" fxLayoutGap="20px">
-        <mat-card fxFlex="50">
-          <mat-card-header>
-            <mat-card-title>
-              <button mat-icon-button (click)="goBack()">
-                <mat-icon>arrow_back</mat-icon>
-              </button>
-              {{(recipeSubject | async)?.name}}
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <table mat-table [dataSource]="foodRows" class="mat-elevation-z0">
-              <ng-container matColumnDef="quantity">
-                <th mat-header-cell *matHeaderCellDef> Quantité</th>
-                <td mat-cell *matCellDef="let element">{{element.quantity}}</td>
-              </ng-container>
-              <ng-container matColumnDef="measure">
-                <th mat-header-cell *matHeaderCellDef> Mesure</th>
-                <td mat-cell *matCellDef="let element">{{element.measure}}</td>
-              </ng-container>
-              <ng-container matColumnDef="foodName">
-                <th mat-header-cell *matHeaderCellDef> Aliment</th>
-                <td mat-cell *matCellDef="let element">{{element.foodName}}</td>
-              </ng-container>
-              <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>
-                  <button mat-icon-button color="primary" label="lol" (click)="openRecipeFoodDialog()">
-                    <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
+      <div fxLayout="row" fxLayoutGap="20px" fxLayout.xs="column">
+        <!-- Partie recette -->
+        <div fxFlex="50" fxFlex.xs="100">
+          <mat-card style="height: auto !important;">
+            <mat-card-header>
+              <mat-card-title>
+                <div style="display: flex; align-items: center;">
+                  <button mat-icon-button (click)="goBack()" style="margin-right: 8px;">
+                    <mat-icon>arrow_back</mat-icon>
                   </button>
-                </th>
+                  <span>{{(recipeSubject | async)?.name}}</span>
+                </div>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content fxFlex>
+              <table mat-table [dataSource]="foodRows" class="mat-elevation-z0">
+                <ng-container matColumnDef="quantity">
+                  <th mat-header-cell *matHeaderCellDef> Quantité</th>
+                  <td mat-cell *matCellDef="let element">{{element.quantity}}</td>
+                </ng-container>
+                <ng-container matColumnDef="measure">
+                  <th mat-header-cell *matHeaderCellDef> Mesure</th>
+                  <td mat-cell *matCellDef="let element">{{element.measure}}</td>
+                </ng-container>
+                <ng-container matColumnDef="foodName">
+                  <th mat-header-cell *matHeaderCellDef> Aliment</th>
+                  <td mat-cell *matCellDef="let element">{{element.foodName}}</td>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>
+                    <button mat-flat-button color="primary"    (click)="openRecipeFoodDialog()" style="display: flex; align-items: center;">
+                      <mat-icon style="margin-right: 8px;">add</mat-icon>
+                      <span style="line-height: 24px;">Ajouter aliment</span>
+                    </button>
+                  </th>
 
-                <td mat-cell *matCellDef="let row; let i=index;">
-                  <button mat-icon-button color="primary" (click)="openRecipeFoodDialog(row.id)">
-                    <mat-icon aria-label="Edit">edit</mat-icon>
-                  </button>
+                  <td mat-cell *matCellDef="let row; let i=index;">
+                    <button mat-icon-button color="primary" (click)="openRecipeFoodDialog(row.id)">
+                      <mat-icon aria-label="Edit">edit</mat-icon>
+                    </button>
 
-                  <button mat-icon-button color="primary" (click)="deleteRecipeFood(row.id)">
-                    <mat-icon aria-label="Delete">delete</mat-icon>
-                  </button>
-                </td>
-              </ng-container>
+                    <button mat-icon-button color="warn" (click)="deleteRecipeFood(row.id)">
+                      <mat-icon aria-label="Delete">delete</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-            </table>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+              </table>
 
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card fxFlex="50">
-          <mat-card-content>
-            <app-nutritional-values [nutritionalValues]="nutritionalValues | async"></app-nutritional-values>
-          </mat-card-content>
-        </mat-card>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <!-- Partie valeur nutritionnelle -->
+        <div fxFlex="50" fxFlex.xs="100">
+          <app-nutritional-values [nutritionalValues]="nutritionalValues | async"></app-nutritional-values>
+        </div>
       </div>
     </div>
   `,
@@ -99,6 +103,7 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     protected recipeService: RecipeService,
     private dialogService: MatDialog,
+    private router: Router,
     private location: Location) {
     this.subscriptionRecipe = this.recipeService.recipe.subscribe(value => {
       if (!value) return
@@ -132,7 +137,7 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
 
 
   goBack() {
-    this.location.back()
+    this.router.navigate(['recipes'])
   }
 
   openRecipeFoodDialog(recipeFoodId?: number) {

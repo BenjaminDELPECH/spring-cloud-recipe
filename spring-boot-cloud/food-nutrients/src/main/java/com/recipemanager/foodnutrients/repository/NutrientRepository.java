@@ -11,7 +11,7 @@ public interface NutrientRepository extends JpaRepository<Nutrient, Long> {
 
 
     @Query("""
-            select n from Nutrient n 
+            select n from Nutrient n
             where n.nutrientGroup.id is not null
             order by n.nameFr
             """)
