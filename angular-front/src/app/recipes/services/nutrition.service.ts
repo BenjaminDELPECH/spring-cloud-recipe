@@ -59,7 +59,7 @@ export class NutritionService {
         if (!conversionFactor) {
           return
         }
-        const valConverted = value * conversionFactor?.factor ? conversionFactor.factor : 0 * quantity
+        const valConverted = value * conversionFactor?.factor ? conversionFactor.factor * quantity : 0
         nutritionalValuesByNutrientId.set(nutrientId, previousValue + valConverted)
       })
     const nutritionalValues: NutritionalValue[] = [];
