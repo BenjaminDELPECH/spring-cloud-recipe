@@ -13,10 +13,6 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'auth',
-    loadChildren: () => import('./auth/auth.module').then(value => value.AuthModule)
-  },
-  {
     path: '',
     redirectTo: 'recipes',
     pathMatch: 'full'

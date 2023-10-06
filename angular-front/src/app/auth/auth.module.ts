@@ -7,6 +7,8 @@ import {MatInputModule} from "@angular/material/input";
 import {RouterModule} from "@angular/router";
 import {AuthRoutingModule} from "./auth-routing.module";
 import {MatTabsModule} from "@angular/material/tabs";
+import {MatCardModule} from "@angular/material/card";
+import {MatButtonModule} from "@angular/material/button";
 
 
 @NgModule({
@@ -20,7 +22,9 @@ import {MatTabsModule} from "@angular/material/tabs";
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
-    MatTabsModule
+    MatTabsModule,
+    MatCardModule,
+    MatButtonModule
   ],
   exports: [
     RouterModule

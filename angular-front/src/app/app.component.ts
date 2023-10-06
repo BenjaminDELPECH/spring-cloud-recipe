@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {Routes} from "@angular/router";
 import {routes} from "./app-routing.module";
+import {AuthService} from "./auth/services/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -13,11 +14,24 @@ import {routes} from "./app-routing.module";
               <span>My recipes.com</span>
               <span class="menu-spacer"></span>
               <div fxShow="true" fxHide.lt-md>
-                  <!-- The following menu items will be hidden on both SM and XS screen sizes -->
                   <ng-template ngFor [ngForOf]="routes" let-route>
                       <a [routerLink]="route.path" mat-button>
                           {{route.path}}
                       </a>
+                  </ng-template>
+              </div>
+              <div fxShow="true" fxHide.lt-md style="margin-left:auto;">
+                  <!-- Si l'utilisateur est connecté -->
+                  <ng-container *ngIf="isLoggedIn; else notLoggedIn">
+                    <mat-icon>account_circle</mat-icon>
+                      <button mat-icon-button (click)="logout()">
+                          <mat-icon>logout</mat-icon>
+                      </button>
+                  </ng-container>
+                  <!-- Si l'utilisateur n'est pas connecté -->
+                  <ng-template #notLoggedIn>
+                      <a mat-button [routerLink]="'/login'">Me connecter</a>
+                      <a mat-button [routerLink]="'/register'">M'inscrire</a>
                   </ng-template>
               </div>
           </mat-toolbar-row>
@@ -42,9 +56,15 @@ import {routes} from "./app-routing.module";
 })
 export class AppComponent {
   routes: Routes = []
+  isLoggedIn = false;
 
-  constructor() {
+  constructor(private authService: AuthService) {
     this.routes = routes
+    this.isLoggedIn = !!authService.getJwtToken()
   }
 
+  logout() {
+    this.authService.setJwtToken("");
+    window.location.href = '/'
+  }
 }

@@ -34,7 +34,7 @@ export class AuthService {
     return this.httpClient.post<JwtResponse>(this.AUTH_URL + "/sign-in", signinPayload).pipe(
       take(1),
       tap(value => {
-        this.storeJwtToken(value.token)
+        this.setJwtToken(value.token)
       }))
   }
 
@@ -46,7 +46,8 @@ export class AuthService {
     return localStorage.getItem(this.JWT_TOKEN);
   }
 
-  private storeJwtToken(token: string) {
+
+  public setJwtToken(token: string) {
     localStorage.setItem(this.JWT_TOKEN, token);
   }
 
