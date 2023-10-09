@@ -56,8 +56,8 @@ public class GeneralSecurityConfiguration {
     private String jwtSecret;
 
     // TODO
-//    @Value("${allowed.hosts}")
-//    private List<String> allowedHosts;
+    @Value("${allowed.hosts}")
+    private String[] allowedHosts;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -82,7 +82,7 @@ public class GeneralSecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));  // Allow all origins
+        configuration.setAllowedOrigins(List.of(allowedHosts));  // Allow all origins
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
