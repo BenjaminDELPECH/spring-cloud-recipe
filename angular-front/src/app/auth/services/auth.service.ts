@@ -39,7 +39,7 @@ export class AuthService {
   }
 
   signUp(signUpPayload: SignUpPayload) {
-    return this.httpClient.post<JwtResponse>(this.AUTH_URL + "/sign-up", signUpPayload);
+    return this.httpClient.post<String>(this.AUTH_URL + "/sign-up", signUpPayload);
   }
 
   public getJwtToken() {

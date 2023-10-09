@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {SignInPayload} from "../../models/SignInPayload";
 import {AuthService} from "../../services/auth.service";
-import {Subscription} from "rxjs";
+import {Subscription, take} from "rxjs";
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Dialog} from "@angular/cdk/dialog";
@@ -12,6 +12,11 @@ import {Dialog} from "@angular/cdk/dialog";
   selector: 'app-sign-in',
   template: `
     <mat-card *ngIf="isSignInPage">
+      <mat-card *ngIf="errorMessage">
+        <mat-card-content>
+          <mat-error>{{errorMessage}}</mat-error>
+        </mat-card-content>
+      </mat-card>
       <mat-card-header>
         <mat-card-title>Connexion</mat-card-title>
       </mat-card-header>
@@ -36,6 +41,11 @@ import {Dialog} from "@angular/cdk/dialog";
       </mat-card-content>
     </mat-card>
     <mat-card *ngIf="isSignInPage===false">
+      <mat-card *ngIf="errorMessage">
+        <mat-card-content>
+          <mat-error>{{errorMessage}}</mat-error>
+        </mat-card-content>
+      </mat-card>
       <mat-card-header>
         <mat-card-title>Inscription</mat-card-title>
       </mat-card-header>
@@ -67,6 +77,8 @@ export class SignInComponent implements OnDestroy {
 
   isSignInPage = true;
 
+  public errorMessage: string | null = null;
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -90,29 +102,54 @@ export class SignInComponent implements OnDestroy {
       return
     }
     const payload: SignInPayload = this.signInForm.value;
-    this.authService.signIn(payload).subscribe(value => {
-      this.dialog.closeAll()
-      this.snackBar.open('Vous etes bien connecté', 'close', {duration: 2000, panelClass: 'successSnack'});
-      window.location.href = '/'
-    })
+    this.authService.signIn(payload)
+      .pipe(
+        take(1)
+      )
+      .subscribe({
+        next: () => {
+          this.dialog.closeAll()
+          this.snackBar.open('Vous etes bien connecté', 'close', {duration: 2000, panelClass: 'successSnack'});
+          window.location.href = '/'
+        },
+        error: (error) => {
+          this.errorMessage = error.error;
+        }
+      })
   }
 
   onSignUp() {
+    if (this.signUpForm.valid === false) {
+      this.signUpForm.markAsTouched()
+      return
+    }
     const payload: SignInPayload = this.signUpForm.value;
-    this.subscription = this.authService.signUp(payload).subscribe(value => {
-      this.router.navigate(['auth', 'signIn'], {
-        queryParams: {
-          registered: 'true'
+    this.subscription = this.authService.signUp(payload)
+      .pipe(
+        take(1)
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigate(['auth', 'signIn'], {
+            queryParams: {
+              registered: 'true'
+            }
+          });
+        },
+        error: (error) => {
+          this.errorMessage = error.error;
         }
-      });
-    });
+      })
   }
 
   swapSignInSignUp() {
     this.isSignInPage = !this.isSignInPage;
+    this.errorMessage = '';
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy()
+    :
+    void {
     this.subscription?.unsubscribe();
   }
 
