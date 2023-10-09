@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import utils.JwtTokenProvider;
@@ -68,7 +70,6 @@ public class UserService {
             return googleUser.get();
         }
     }
-
 
 
     public GoogleIdToken.Payload getGoogleEmailFromGoogleToken(String googleToken) throws IOException, GeneralSecurityException {
@@ -123,6 +124,10 @@ public class UserService {
     }
 
     public JwtResponse signIn(SignInRequest signInRequest) {
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signInRequest.email(), signInRequest.password())
+        );
         return getJwtResponseEntity(
                 signInRequest.email(),
                 signInRequest.password()

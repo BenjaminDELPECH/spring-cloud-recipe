@@ -16,12 +16,11 @@ import {Dialog} from "@angular/cdk/dialog";
         <mat-card-title>Connexion</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <button mat-raised-button color="accent" (click)="swapSignInSignUp()">Pas encore inscrit ? S'inscrire
-        </button>
+        <button mat-raised-button color="accent" (click)="swapSignInSignUp()">Pas encore inscrit ? S'inscrire</button>
         <div *ngIf="!!registered">
           Inscription réussie, vous pouvez vous connecter.
         </div>
-        <form [formGroup]="signInForm" (ngSubmit)="onSignIn()">
+        <form [formGroup]="signInForm" (ngSubmit)="onSignIn()" style="margin-top: 0.5rem;">
           <mat-form-field appearance="fill">
             <mat-label>Email</mat-label>
             <input matInput type="email" formControlName="email" placeholder="Email">
@@ -42,7 +41,7 @@ import {Dialog} from "@angular/cdk/dialog";
       </mat-card-header>
       <mat-card-content>
         <button mat-raised-button color="accent" (click)="swapSignInSignUp()">Déjà inscrit ? Se connecter</button>
-        <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
+        <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()" style="margin-top: 0.5rem;">
           <mat-form-field appearance="fill">
             <mat-label>Email</mat-label>
             <input matInput type="email" formControlName="email" placeholder="Email">
@@ -101,7 +100,6 @@ export class SignInComponent implements OnDestroy {
   onSignUp() {
     const payload: SignInPayload = this.signUpForm.value;
     this.subscription = this.authService.signUp(payload).subscribe(value => {
-      // Vous pouvez ajouter une logique supplémentaire ici, comme la navigation vers une autre page
       this.router.navigate(['auth', 'signIn'], {
         queryParams: {
           registered: 'true'

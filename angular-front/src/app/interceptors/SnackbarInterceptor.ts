@@ -19,7 +19,7 @@ export class SnackbarInterceptor implements HttpInterceptor {
           }
       }),
       catchError(error => {
-        this.snackBar.open('Error while saving.', 'close', {duration: 2000, panelClass: 'errorSnack'});
+        this.snackBar.open(error.error, 'close', {duration: 2000, panelClass: 'errorSnack'});
         return throwError(error);
       })
     );

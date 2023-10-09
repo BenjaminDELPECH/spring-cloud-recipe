@@ -14,41 +14,46 @@ export interface NutritionalRows {
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-nutritional-values',
   template: `
-      <div fxLayout="column" fxLayoutGap="16px">
-          <ng-container *ngFor="let entry of nutritionalValuesByNutrientGroupId | keyvalue"
+    <div fxLayout="column" fxLayoutGap="16px">
+      <ng-container *ngFor="let entry of nutritionalValuesByNutrientGroupName | keyvalue"
 
-          >
-              <mat-card fxFlex="50">
-                  <mat-card-content>
-                      <table mat-table [dataSource]="entry.value">
-                          <ng-container matColumnDef="nutrient">
-                              <th mat-header-cell *matHeaderCellDef> Nutriment</th>
-                              <td mat-cell *matCellDef="let element"
-                              >{{element.nutrientName}}</td>
-                          </ng-container>
-                          <ng-container matColumnDef="value">
-                              <th mat-header-cell *matHeaderCellDef> Valeur</th>
-                              <td mat-cell *matCellDef="let row"> {{row.value}} </td>
-                          </ng-container>
-                          <ng-container matColumnDef="percentage">
-                              <th mat-header-cell *matHeaderCellDef> Pourcentage</th>
-                              <td mat-cell *matCellDef="let row">
-                                  <div class="row bar" style="">
-                                      <div class="percentage"
-                                           [ngStyle]="{width: row.percentage+'%', backgroundColor: row.barColor}"></div>
-                                  </div>
-                              </td>
-                          </ng-container>
-                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                          <tr
-                                  mat-row
-                                  *matRowDef="let row; columns: displayedColumns;"
-                          ></tr>
-                      </table>
-                  </mat-card-content>
-              </mat-card>
-          </ng-container>
-      </div>
+      >
+        <mat-card fxFlex="50">
+          <mat-card-header>
+            <mat-card-title>
+              <span style="padding-left:1rem;">{{ entry.key }}</span>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <table mat-table [dataSource]="entry.value">
+              <ng-container matColumnDef="nutrient">
+                <th mat-header-cell *matHeaderCellDef> Nutriment</th>
+                <td mat-cell *matCellDef="let element"
+                >{{element.nutrientName}}</td>
+              </ng-container>
+              <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef> Valeur</th>
+                <td mat-cell *matCellDef="let row"> {{row.value}} </td>
+              </ng-container>
+              <ng-container matColumnDef="percentage">
+                <th mat-header-cell *matHeaderCellDef> Pourcentage</th>
+                <td mat-cell *matCellDef="let row">
+                  <div class="row bar" style="">
+                    <div class="percentage"
+                         [ngStyle]="{width: row.percentage+'%', backgroundColor: row.barColor}"></div>
+                  </div>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr
+                mat-row
+                *matRowDef="let row; columns: displayedColumns;"
+              ></tr>
+            </table>
+          </mat-card-content>
+        </mat-card>
+      </ng-container>
+    </div>
 
   `,
   styleUrls: ['./nutritional-values.component.css']
@@ -57,7 +62,7 @@ export class NutritionalValuesComponent implements OnChanges {
   @Input()
   nutritionalValues: NutritionalValue[] | null = []
 
-  nutritionalValuesByNutrientGroupId: Map<number, NutritionalRows[]> = new Map<number, NutritionalRows[]>();
+  nutritionalValuesByNutrientGroupName: Map<string, NutritionalRows[]> = new Map<string, NutritionalRows[]>();
   nutritionalValuesSubject: Subject<Map<number, NutritionalRows[]>> = new BehaviorSubject(new Map);
 
   /*  nutritionalRows: NutritionalRows[] = []*/
@@ -67,22 +72,22 @@ export class NutritionalValuesComponent implements OnChanges {
     if (!this.nutritionalValues) {
       return
     }
-    this.nutritionalValuesByNutrientGroupId = new Map<number, NutritionalRows[]>();
+    this.nutritionalValuesByNutrientGroupName = new Map<string, NutritionalRows[]>();
     this.nutritionalValues.forEach(value => {
       const {nutrientGroup} = value.nutrient
-      const {id} = nutrientGroup
-      if (this.nutritionalValuesByNutrientGroupId.has(id) === false) {
-        this.nutritionalValuesByNutrientGroupId.set(id, []);
+      const {nameFr} = nutrientGroup
+      if (this.nutritionalValuesByNutrientGroupName.has(nameFr) === false) {
+        this.nutritionalValuesByNutrientGroupName.set(nameFr, []);
       }
-      let nutritionalRows = this.nutritionalValuesByNutrientGroupId.get(id)!
+      let nutritionalRows = this.nutritionalValuesByNutrientGroupName.get(nameFr)!
       nutritionalRows.push(this.getNutritionalRow(value));
-      this.nutritionalValuesByNutrientGroupId.set(
-        id,
+      this.nutritionalValuesByNutrientGroupName.set(
+        nameFr,
         nutritionalRows
       )
     })
-    this.nutritionalValuesByNutrientGroupId.forEach((value, key) => {
-      this.nutritionalValuesByNutrientGroupId.set(key, value.sort((a, b) => {
+    this.nutritionalValuesByNutrientGroupName.forEach((value, key) => {
+      this.nutritionalValuesByNutrientGroupName.set(key, value.sort((a, b) => {
         if (a.nutrientName < b.nutrientName) {
           return -1;
         } else {

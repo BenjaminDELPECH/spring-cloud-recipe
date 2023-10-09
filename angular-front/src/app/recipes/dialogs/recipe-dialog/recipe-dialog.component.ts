@@ -32,7 +32,7 @@ import {ConversionFactor} from "../../models/ConversionFactor";
               </mat-form-field>
 
 
-              <app-search-add-food
+            <!--  <app-search-add-food
                       (addFoodEmitter)="addRecipeFood($event)"
                       [alreadyAddedFoods]="alreadyAddedFoods"
               />
@@ -73,7 +73,7 @@ import {ConversionFactor} from "../../models/ConversionFactor";
                   </div>
                 </div>
               </mat-list-item>
-            </mat-list>
+            </mat-list>-->
 
           </form>
           <mat-divider></mat-divider>

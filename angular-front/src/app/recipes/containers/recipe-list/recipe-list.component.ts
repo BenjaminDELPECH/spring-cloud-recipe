@@ -18,7 +18,7 @@ interface RecipeRow {
   template: `
     <div style="display: flex;height: 100%;width:100%;flex-flow: wrap">
       <div style="width: 100%;">
-        <table mat-table [dataSource]="recipeListRows" style="padding:1rem;" class="mat-elevation-z2">
+        <table mat-table [dataSource]="recipeListRows" style="width: 100%; table-layout: fixed;" class="mat-elevation-z2">
 
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef> Nom</th>
@@ -32,7 +32,8 @@ interface RecipeRow {
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>
               <div style="display: flex; align-items: center;">
-                <button mat-flat-button color="primary"  (click)="openRecipeDialog()" style="display: flex; align-items: center;">
+                <button mat-flat-button color="primary" (click)="openRecipeDialog()"
+                        style="display: flex; align-items: center;">
                   <mat-icon style="margin-right: 8px;">add</mat-icon>
                   <span style="line-height: 24px;">Nouvelle recette</span>
                 </button>
@@ -90,6 +91,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
     this.dialogService.open(
       RecipeDialogComponent, {
         data: recipe,
+        width: '66%'
       })
   }
 

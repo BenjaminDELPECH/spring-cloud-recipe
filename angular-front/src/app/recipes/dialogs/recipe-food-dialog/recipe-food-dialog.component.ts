@@ -18,7 +18,7 @@ export interface RecipeFoodDialogData {
   template: `
       <h1 mat-dialog-title>{{getTitle()}}</h1>
       <div mat-dialog-content>
-          Aliment selectionné : {{recipeFoodForm.get('food')?.value?.name}}
+          Ingrédient selectionné : {{recipeFoodForm.get('food')?.value?.name}}
           <form [formGroup]="recipeFoodForm" fxFlexFill fxFlexAlign (ngSubmit)="onSubmit()" >
               <app-search-add-food
                       [value]="data.recipeFood?.food"

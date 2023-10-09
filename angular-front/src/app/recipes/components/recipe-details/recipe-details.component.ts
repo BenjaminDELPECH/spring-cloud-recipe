@@ -47,14 +47,14 @@ interface RecipeFoodRow {
                   <td mat-cell *matCellDef="let element">{{element.measure}}</td>
                 </ng-container>
                 <ng-container matColumnDef="foodName">
-                  <th mat-header-cell *matHeaderCellDef> Aliment</th>
+                  <th mat-header-cell *matHeaderCellDef> Ingrédient</th>
                   <td mat-cell *matCellDef="let element">{{element.foodName}}</td>
                 </ng-container>
                 <ng-container matColumnDef="actions">
                   <th mat-header-cell *matHeaderCellDef>
                     <button mat-flat-button color="primary"    (click)="openRecipeFoodDialog()" style="display: flex; align-items: center;">
                       <mat-icon style="margin-right: 8px;">add</mat-icon>
-                      <span style="line-height: 24px;">Ajouter aliment</span>
+                      <span style="line-height: 24px;">Ajouter ingrédient</span>
                     </button>
                   </th>
 
@@ -147,7 +147,8 @@ export class RecipeDetailsComponent implements OnInit, OnDestroy {
         data: {
           recipeFood: recipeFood,
           recipeId: this.recipeId
-        }
+        },
+        width: '66%'
       })
   }
 

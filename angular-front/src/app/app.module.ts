@@ -21,6 +21,7 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {AuthInterceptor} from "./interceptors/AuthInterceptor";
 import {AuthModule} from "./auth/auth.module";
 import {CorsInterceptor} from "./interceptors/CorsInterceptor";
+import {SnackbarInterceptor} from "./interceptors/SnackbarInterceptor";
 
 
 @NgModule({
@@ -61,6 +62,11 @@ import {CorsInterceptor} from "./interceptors/CorsInterceptor";
     {
       provide: HTTP_INTERCEPTORS,
       useClass: CorsInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SnackbarInterceptor,
       multi: true
     }
   ],

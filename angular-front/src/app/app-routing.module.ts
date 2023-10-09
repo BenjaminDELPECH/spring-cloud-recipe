@@ -10,7 +10,7 @@ export const routes: Routes = [
   {
     path: 'recipes',
     loadChildren: () => import('./recipes/recipes.module').then(value => value.RecipesModule),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
   {
     path: '',

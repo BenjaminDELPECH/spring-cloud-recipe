@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Routes} from "@angular/router";
+import {Router, Routes} from "@angular/router";
 import {routes} from "./app-routing.module";
 import {AuthService} from "./auth/services/auth.service";
 
@@ -11,9 +11,9 @@ import {AuthService} from "./auth/services/auth.service";
               <button mat-icon-button (click)="sidenav.toggle()" fxShow="true" fxHide.gt-sm>
                   <mat-icon>menu</mat-icon>
               </button>
-              <span>My recipes.com</span>
+              <span (click)="goToHome()" style="cursor: pointer">My recipes.com</span>
               <span class="menu-spacer"></span>
-              <div fxShow="true" fxHide.lt-md>
+              <div fxShow="true" fxHide.lt-md style="margin-left:2rem;">
                   <ng-template ngFor [ngForOf]="routes" let-route>
                       <a [routerLink]="route.path" mat-button>
                           {{route.path}}
@@ -23,7 +23,7 @@ import {AuthService} from "./auth/services/auth.service";
               <div fxShow="true" fxHide.lt-md style="margin-left:auto;">
                   <!-- Si l'utilisateur est connecté -->
                   <ng-container *ngIf="isLoggedIn; else notLoggedIn">
-                    <mat-icon>account_circle</mat-icon>
+                      <mat-icon>account_circle</mat-icon>
                       <button mat-icon-button (click)="logout()">
                           <mat-icon>logout</mat-icon>
                       </button>
@@ -56,11 +56,16 @@ import {AuthService} from "./auth/services/auth.service";
 })
 export class AppComponent {
   routes: Routes = []
+  pathListToShowInMenu: string[] = ['recipes']
   isLoggedIn = false;
 
-  constructor(private authService: AuthService) {
-    this.routes = routes
+  constructor(private authService: AuthService, private router: Router) {
+    this.routes = routes.filter(e1 => this.pathListToShowInMenu.find(e2 => e1.path === e2))
     this.isLoggedIn = !!authService.getJwtToken()
+  }
+
+  goToHome() {
+    this.router.navigate(['/home'])
   }
 
   logout() {

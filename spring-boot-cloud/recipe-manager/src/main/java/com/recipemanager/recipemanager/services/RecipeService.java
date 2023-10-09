@@ -94,7 +94,6 @@ public class RecipeService {
         recipeFoodAlready.setFoodId(recipeFoodDto.food().id());
         recipeFoodAlready.setQuantity(recipeFoodDto.quantity());
         recipeFoodAlready.setConversionFactorId(recipeFoodDto.conversionFactor().id());
-        recipeFoodRepository.save(recipeFoodAlready);
         return getCompleteRecipe(recipeFoodAlready.getRecipe());
     }
 

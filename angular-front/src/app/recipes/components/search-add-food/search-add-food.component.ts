@@ -8,9 +8,9 @@ import {FoodService} from "../../services/food.service";
   selector: 'app-search-add-food',
   template: `
     <mat-form-field style="margin-top:2.5rem;">
-      <mat-label>Aliments :</mat-label>
+      <mat-label>Ingrédients :</mat-label>
       <input type="text"
-             aria-label="Aliment"
+             aria-label="Ingrédient"
              placeholder="Chercher.."
              matInput
              id="foodSearch"

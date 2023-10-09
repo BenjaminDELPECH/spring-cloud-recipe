@@ -12,7 +12,9 @@ export const authGuard: CanActivateFn = (route, state) => {
   if (isAuthenticated) {
     return true;
   } else {
-    dialog.open(SignInComponent)
+    dialog.open(SignInComponent, {
+      disableClose: true
+    })
     return false;
   }
   return true;
