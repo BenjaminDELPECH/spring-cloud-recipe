@@ -1,13 +1,13 @@
 package com.delpech.userservice.entities;
 
 import com.delpech.userservice.enums.RoleType;
+import com.edelpech.sharedlibrarystarter.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import utils.BaseEntity;
 
 import java.util.Collection;
 import java.util.HashSet;

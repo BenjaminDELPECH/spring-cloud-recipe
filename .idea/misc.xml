@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
@@ -10,9 +11,16 @@
         <option value="$PROJECT_DIR$/spring-boot-cloud/user-service/pom.xml" />
         <option value="$PROJECT_DIR$/spring-boot-cloud/shared-backend/pom.xml" />
         <option value="$PROJECT_DIR$/spring-boot-cloud/food-nutrients/pom.xml" />
+        <option value="$PROJECT_DIR$/spring-boot-cloud/shared-library-starter/shared-library-starter/pom.xml" />
+        <option value="$PROJECT_DIR$/spring-boot-cloud/shared-library-starter/pom.xml" />
+        <option value="$PROJECT_DIR$/spring-boot-cloud/pom-parent/pom.xml" />
       </list>
     </option>
-    <option name="workspaceImportForciblyTurnedOn" value="true" />
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/spring-boot-cloud/shared-backend/pom.xml" />
+      </set>
+    </option>
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="openjdk-21" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />

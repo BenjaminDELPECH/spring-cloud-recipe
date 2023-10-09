@@ -1,5 +1,6 @@
 package com.recipemanager.recipemanager.services;
 
+import com.edelpech.sharedlibrarystarter.UserUtils;
 import com.recipemanager.recipemanager.dto.*;
 import com.recipemanager.recipemanager.entity.Recipe;
 import com.recipemanager.recipemanager.entity.RecipeFood;
@@ -10,7 +11,6 @@ import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import utils.UserUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;

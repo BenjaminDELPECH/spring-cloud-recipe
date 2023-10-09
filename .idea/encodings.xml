@@ -4,8 +4,11 @@
     <file url="file://$PROJECT_DIR$/spring-boot-cloud/api-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot-cloud/config-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot-cloud/food-nutrients/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-boot-cloud/pom-parent/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot-cloud/recipe-manager/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot-cloud/service-registry/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-boot-cloud/shared-library-starter/shared-library-starter/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/spring-boot-cloud/shared-library-starter/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/spring-boot-cloud/user-service/src/main/java" charset="UTF-8" />
   </component>
 </project>

@@ -1,10 +1,10 @@
 package com.delpech.userservice.entities;
 
+import com.edelpech.sharedlibrarystarter.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import utils.BaseEntity;
 
 import java.time.Instant;
 import java.util.UUID;

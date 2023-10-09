@@ -1,14 +1,11 @@
 package com.recipemanager.foodnutrients;
 
+import com.edelpech.sharedlibrarystarter.GeneralSecurityConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import utils.AuditorAwareImpl;
-import utils.JwtTokenProvider;
 
-@Import({AuditorAwareImpl.class, JwtTokenProvider.class})
-@EnableJpaAuditing
+@Import(GeneralSecurityConfiguration.class)
 @SpringBootApplication
 public class FoodNutrientsApplication {
 

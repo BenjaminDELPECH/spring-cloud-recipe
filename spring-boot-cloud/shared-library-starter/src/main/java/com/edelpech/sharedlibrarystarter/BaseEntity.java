@@ -1,4 +1,4 @@
-package utils;
+package com.edelpech.sharedlibrarystarter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

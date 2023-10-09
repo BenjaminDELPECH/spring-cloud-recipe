@@ -1,5 +1,6 @@
 package com.recipemanager.recipemanager.entity;
 
+import com.edelpech.sharedlibrarystarter.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import utils.BaseEntity;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

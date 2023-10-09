@@ -11,6 +11,7 @@ import com.delpech.userservice.exceptions.UserAlreadyExistException;
 import com.delpech.userservice.repository.RoleRepository;
 import com.delpech.userservice.repository.UserRepository;
 import com.delpech.userservice.responses.JwtResponse;
+import com.edelpech.sharedlibrarystarter.GeneralSecurityConfiguration;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -20,13 +21,11 @@ import jakarta.ws.rs.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import utils.JwtTokenProvider;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -34,17 +33,16 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Service
-@Import(JwtTokenProvider.class)
 public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManager authenticationManager;
+    private final GeneralSecurityConfiguration.JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
-    private final JwtTokenProvider jwtTokenProvider;
 
 
     public JwtResponse getJwtResponse(String googleId) throws GeneralSecurityException, IOException {

@@ -8,22 +8,29 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="config-server" />
+        <module name="shared-library-starter" />
         <module name="api-gateway" />
+        <module name="pom-parent" />
         <module name="recipe-manager" />
         <module name="food-nutrients" />
         <module name="user-service" />
-        <module name="shared-service" />
         <module name="service-registry" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="parent-pom" target="21" />
+      <module name="shared-service" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="food-nutrients" options="-parameters" />
+      <module name="pom-parent" options="-parameters" />
       <module name="recipe-manager" options="-parameters" />
       <module name="service-registry" options="-parameters" />
+      <module name="shared-library-starter" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>

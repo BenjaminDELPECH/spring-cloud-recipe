@@ -1,9 +1,9 @@
 package com.delpech.userservice.entities;
 
 import com.delpech.userservice.enums.RoleType;
+import com.edelpech.sharedlibrarystarter.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
-import utils.BaseEntity;
 
 @Getter
 @Entity
